@@ -1,0 +1,31 @@
+{
+  "name": "esendex",
+  "version": "0.0.0",
+  "description": "Esendex Node.js client library.",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codesleuth/esendex-node"
+  },
+  "bugs": {
+    "url": "https://github.com/codesleuth/esendex-node/issues"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "author": "David Wood <david.p.wood@gmail.com>",
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/Codesleuth/esendex-node/raw/master/LICENSE"
+  },
+  "dependencies": {
+    "xml2js": "0.4.4"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.3",
+    "sinon": "^1.10.3"
+  }
+}
