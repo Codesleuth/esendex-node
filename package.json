@@ -14,7 +14,7 @@
     "url": "https://github.com/codesleuth/esendex-node/issues"
   },
   "engines": {
-    "node": ">=0.8"
+    "node": ">=0.10"
   },
   "author": "David Wood <david.p.wood@gmail.com>",
   "license": {
