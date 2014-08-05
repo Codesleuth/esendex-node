@@ -1,7 +1,7 @@
 esendex-node
 ============
 
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][codeship-url] [![Codeship Status for Codesleuth/esendex-node][codeship-image]][codeship-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Codeship Status for Codesleuth/esendex-node][codeship-image]][codeship-url]
 [![NPM][npmico-image]][npmico-url]
 
 A work-in-progress simplistic client library for the [Esendex](http://esendex.com) [REST API](http://developers.esendex.com/APIs/REST-API).
