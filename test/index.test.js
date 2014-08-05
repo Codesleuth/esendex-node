@@ -32,8 +32,13 @@ describe('Esendex', function () {
         some: "option",
         other: "yes"
       };
+
       requestSpy = sinon.spy();
-      var requireStub = sinon.stub().withArgs('./request').returns(requestSpy);
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./request').returns(requestSpy);
+      requireStub.returns(function () {});
+
       esendex = Esendex(options, requireStub);
     });
 
@@ -55,7 +60,11 @@ describe('Esendex', function () {
 
     before(function () {
       messagesSpy = sinon.spy();
-      var requireStub = sinon.stub().withArgs('./messages').returns(messagesSpy);
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./messages').returns(messagesSpy);
+      requireStub.returns(function () {});
+
       esendex = Esendex(options, requireStub);
     });
 
@@ -77,7 +86,11 @@ describe('Esendex', function () {
 
     before(function () {
       accountsSpy = sinon.spy();
-      var requireStub = sinon.stub().withArgs('./accounts').returns(accountsSpy);
+      
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./accounts').returns(accountsSpy);
+      requireStub.returns(function () {});
+
       esendex = Esendex(options, requireStub);
     });
 
