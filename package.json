@@ -4,7 +4,8 @@
   "description": "Esendex Node.js client library.",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "gulp"
+    "test": "gulp",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -25,10 +26,13 @@
     "xml2js": "0.4.4"
   },
   "devDependencies": {
+    "coveralls": "^2.11.1",
     "gulp": "^3.8.7",
     "gulp-jshint": "^1.8.4",
     "gulp-mocha": "^0.5.2",
+    "istanbul": "^0.3.0",
     "mocha": "^1.21.3",
+    "mocha-lcov-reporter": "0.0.1",
     "sinon": "^1.10.3"
   }
 }

@@ -1,7 +1,8 @@
 esendex-node
 ============
 
-[![Build Status](https://travis-ci.org/Codesleuth/esendex-node.svg?branch=master)](https://travis-ci.org/Codesleuth/esendex-node)  [![Codeship Status for Codesleuth/esendex-node](https://www.codeship.io/projects/51dfa190-ff1b-0131-5487-5eefab01992e/status)](https://www.codeship.io/projects/29670)
+[![Build Status](https://travis-ci.org/Codesleuth/esendex-node.svg?branch=master)](https://travis-ci.org/Codesleuth/esendex-node) [![Coverage Status](https://coveralls.io/repos/Codesleuth/esendex-node/badge.png)](https://coveralls.io/r/Codesleuth/esendex-node) [![Codeship Status for Codesleuth/esendex-node](https://www.codeship.io/projects/51dfa190-ff1b-0131-5487-5eefab01992e/status)](https://www.codeship.io/projects/29670)
+[![NPM](https://nodei.co/npm/esendex.png)](https://nodei.co/npm/esendex/)
 
 A work-in-progress simplistic client library for the [Esendex](http://esendex.com) [REST API](http://developers.esendex.com/APIs/REST-API).
 
