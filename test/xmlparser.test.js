@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    sinon = require('sinon')
+    sinon = require('sinon');
 var XmlParser = require('../lib/xmlparser');
 
 describe('XML Parser', function () {

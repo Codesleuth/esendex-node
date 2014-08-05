@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    sinon = require('sinon')
+    sinon = require('sinon');
 var Accounts = require('../lib/accounts');
 
 describe('Accounts', function () {

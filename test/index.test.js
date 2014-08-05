@@ -1,6 +1,5 @@
 var assert = require('assert'),
-    sinon = require('sinon'),
-    util = require('util');
+    sinon = require('sinon');
 var Esendex = require('../');
 
 describe('Esendex', function () {

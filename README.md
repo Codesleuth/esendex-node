@@ -1,6 +1,8 @@
 esendex-node
 ============
 
+[![Build Status](https://travis-ci.org/Codesleuth/esendex-node.svg?branch=master)](https://travis-ci.org/Codesleuth/esendex-node)  ![Codeship Status for Codesleuth/esendex-node](https://www.codeship.io/projects/51dfa190-ff1b-0131-5487-5eefab01992e/status)](https://www.codeship.io/projects/29670)
+
 A work-in-progress simplistic client library for the [Esendex](http://esendex.com) [REST API](http://developers.esendex.com/APIs/REST-API).
 
 ## Getting Started

@@ -1,10 +1,10 @@
 {
   "name": "esendex",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Esendex Node.js client library.",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "gulp"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,9 @@
     "xml2js": "0.4.4"
   },
   "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-jshint": "^1.8.4",
+    "gulp-mocha": "^0.5.2",
     "mocha": "^1.21.3",
     "sinon": "^1.10.3"
   }

@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    sinon = require('sinon')
+    sinon = require('sinon');
 var XmlBuilder = require('../lib/xmlbuilder');
 
 describe('XML Builder', function () {
@@ -7,10 +7,9 @@ describe('XML Builder', function () {
   var rootName;
   var expectedXml;
   var objectToBuild;
-  var buildObjectFake;
+  var buildObjectStub;
   var builderStub;
   var xml2jsFake;
-  var buildObjectFunc;
   var result;
 
   before(function () {

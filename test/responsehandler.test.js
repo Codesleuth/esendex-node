@@ -1,5 +1,4 @@
-var assert = require('assert'),
-    sinon = require('sinon')
+var sinon = require('sinon');
 var ResponseHandler = require('../lib/responsehandler');
 
 describe('Response Handler', function () {

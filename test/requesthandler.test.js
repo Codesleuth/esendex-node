@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    sinon = require('sinon')
+    sinon = require('sinon');
 var RequestHandler = require('../lib/requesthandler');
 
 describe('Request', function () {
