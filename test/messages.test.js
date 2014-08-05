@@ -35,10 +35,10 @@ describe('Messages', function () {
     var parserStub;
 
     before(function () {
-      responseXml = "could be anything really";
+      responseXml = 'could be anything really';
       requestStub = sinon.stub().callsArgWith(4, null, responseXml);
       var esendexFake = {
-        api: {
+        requesthandler: {
           request: requestStub
         }
       };
@@ -48,7 +48,7 @@ describe('Messages', function () {
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
 
       var requireStub = sinon.stub();
-      requireStub.withArgs('./parser').returns(parserStub);
+      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
       requireStub.returns(sinon.spy());
 
       var messages = Messages(esendexFake, requireStub);
@@ -82,11 +82,11 @@ describe('Messages', function () {
     var messagesToSend;
 
     before(function () {
-      requestXml = "could be anything really";
-      responseXml = "some message headers response";
+      requestXml = 'could be anything really';
+      responseXml = 'some message headers response';
       requestStub = sinon.stub().callsArgWith(4, null, responseXml);
       var esendexFake = {
-        api: {
+        requesthandler: {
           request: requestStub
         }
       };
@@ -97,8 +97,8 @@ describe('Messages', function () {
       builderStub = sinon.stub().returns(buildObjectStub);
 
       var requireStub = sinon.stub();
-      requireStub.withArgs('./parser').returns(parserStub);
-      requireStub.withArgs('./builder').returns(builderStub);
+      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
+      requireStub.withArgs('./xmlbuilder').returns(builderStub);
 
       messagesToSend = { some: 'messages' };
 

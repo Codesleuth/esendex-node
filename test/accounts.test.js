@@ -11,7 +11,7 @@ describe('Accounts', function () {
 
     before(function () {
       esendex = {};
-      accounts = Accounts(esendex, sinon.spy());
+      accounts = Accounts(esendex, sinon.stub().returns(sinon.spy()));
     });
 
     it('should create an instance of the accounts api', function () {
@@ -35,10 +35,10 @@ describe('Accounts', function () {
     var parserStub;
 
     before(function () {
-      responseXml = "not actually xml here";
+      responseXml = 'not actually xml here';
       requestStub = sinon.stub().callsArgWith(4, null, responseXml);
       var esendexFake = {
-        api: {
+        requesthandler: {
           request: requestStub
         }
       };
@@ -47,7 +47,8 @@ describe('Accounts', function () {
       responseObject = { accounts: 'accounts' };
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
 
-      var requireStub = sinon.stub().withArgs('./parser').returns(parserStub);
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
 
       var accounts = Accounts(esendexFake, requireStub);
       accounts.get(options, callbackSpy);

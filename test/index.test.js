@@ -1,8 +1,7 @@
 var assert = require('assert'),
     sinon = require('sinon'),
     util = require('util');
-var Esendex = require('../'),
-    request = require('../lib/request');
+var Esendex = require('../');
 
 describe('Esendex', function () {
 
@@ -21,25 +20,24 @@ describe('Esendex', function () {
 
   });
 
-  describe('api', function () {
+  describe('requesthandler module', function () {
 
     var options;
-    var esendex;
     var requestSpy;
 
     before(function () {
       options = {
-        some: "option",
-        other: "yes"
+        some: 'option',
+        other: 'yes'
       };
 
       requestSpy = sinon.spy();
 
       var requireStub = sinon.stub();
-      requireStub.withArgs('./request').returns(requestSpy);
+      requireStub.withArgs('./requesthandler').returns(requestSpy);
       requireStub.returns(function () {});
 
-      esendex = Esendex(options, requireStub);
+      Esendex(options, requireStub);
     });
 
     it('should expose an instance of the request api', function () {
@@ -54,7 +52,6 @@ describe('Esendex', function () {
 
   describe('messages', function () {
 
-    var options;
     var esendex;
     var messagesSpy;
 
@@ -65,7 +62,7 @@ describe('Esendex', function () {
       requireStub.withArgs('./messages').returns(messagesSpy);
       requireStub.returns(function () {});
 
-      esendex = Esendex(options, requireStub);
+      esendex = Esendex(null, requireStub);
     });
 
     it('should expose an instance of the messages api', function () {
@@ -80,7 +77,6 @@ describe('Esendex', function () {
 
   describe('accounts', function () {
 
-    var options;
     var esendex;
     var accountsSpy;
 
@@ -91,7 +87,7 @@ describe('Esendex', function () {
       requireStub.withArgs('./accounts').returns(accountsSpy);
       requireStub.returns(function () {});
 
-      esendex = Esendex(options, requireStub);
+      esendex = Esendex(null, requireStub);
     });
 
     it('should expose an instance of the accounts api', function () {
