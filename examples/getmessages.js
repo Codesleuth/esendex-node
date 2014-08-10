@@ -2,7 +2,7 @@ var config = require('./config'),
     esendex = require('../')(config);
 
 var options = {
-  startIndex: 1,
+  startIndex: 0,
   count: 3,
   accountreference: config.accountreference
 };
