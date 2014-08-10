@@ -22,7 +22,7 @@ describe('Request', function () {
       assert.equal(actualOptions.host, 'api.esendex.com');
       assert.equal(actualOptions.port, 443);
       assert.equal(actualOptions.https, true);
-      assert.equal(actualOptions.timeout, 30);
+      assert.equal(actualOptions.timeout, 30000);
       assert.equal(actualOptions.username, undefined);
       assert.equal(actualOptions.password, undefined);
     });
@@ -81,7 +81,7 @@ describe('Request', function () {
       var actualOptions = request.options;
       assert.equal(actualOptions.port, 443);
       assert.equal(actualOptions.https, true);
-      assert.equal(actualOptions.timeout, 30);
+      assert.equal(actualOptions.timeout, 30000);
       assert.equal(actualOptions.username, undefined);
     });
 
@@ -95,7 +95,7 @@ describe('Request', function () {
     var path;
     var data;
     var expectedStatus;
-    var callbackSpy;
+    var callback;
     var requestStub;
     var querystring;
     var expectedPath;
@@ -119,7 +119,6 @@ describe('Request', function () {
       path = '/some/path';
       data = {param1: 10, param2: 22};
       expectedStatus = 435;
-      callbackSpy = sinon.spy();
       querystring = 'asdljhasdkljalkdjs';
       expectedPath = path + '?' + querystring;
       responseBody = 'This was the response body';
@@ -128,18 +127,20 @@ describe('Request', function () {
 
       var socketFake = { setTimeout: sinon.stub(), on: sinon.stub() };
 
-      requestFake = { on: sinon.stub(), end: sinon.spy() };
+      requestFake = { on: sinon.stub(), end: sinon.expectation.create().once() };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
 
       responseFake = 'This is a fake response object';
 
-      requestStub = sinon.stub();
+      requestStub = sinon.expectation.create().once();
       requestStub.callsArgWith(1, responseFake);
       requestStub.returns(requestFake);
 
-      responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
+      responseHandlerFake = { handle: sinon.expectation.create().once().callsArgWith(2, null, responseBody) };
 
       stringifyStub = sinon.stub().returns(querystring);
+
+      callback = sinon.expectation.create().once();
 
       var requireStub = sinon.stub();
       requireStub.withArgs('https').returns({ request: requestStub });
@@ -147,11 +148,7 @@ describe('Request', function () {
       requireStub.withArgs('./responsehandler').returns(responseHandlerFake);
 
       var request = RequestHandler(options, requireStub);
-      request.request(method, path, data, expectedStatus, callbackSpy);
-    });
-
-    it('should call http.request once', function () {
-      sinon.assert.calledOnce(requestStub);
+      request.request(method, path, data, expectedStatus, callback);
     });
 
     it('should stringify the query string', function () {
@@ -176,17 +173,15 @@ describe('Request', function () {
     });
 
     it('should end the request', function () {
-      sinon.assert.calledOnce(requestFake.end);
+      requestFake.end.verify();
     });
 
     it('should call the response handler to handle the response', function () {
-      sinon.assert.calledOnce(responseHandlerFake.handle);
       sinon.assert.calledWith(responseHandlerFake.handle, responseFake, expectedStatus, sinon.match.func);
     });
 
     it('should have called the callback', function () {
-      sinon.assert.calledOnce(callbackSpy);
-      sinon.assert.calledWith(callbackSpy, null, responseBody);
+      sinon.assert.calledWith(callback, null, responseBody);
     });
 
   });
@@ -199,14 +194,14 @@ describe('Request', function () {
     var requestFake;
     var requestStub;
     var responseHandlerFake;
-    var callbackSpy;
+    var callback;
 
     before(function () {
       path = '1/2/3/4';
       body = 'some xml body';
       responseBody = 'This is the response body content';
 
-      requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.spy() };
+      requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.expectation.create().once() };
 
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
       responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
@@ -215,10 +210,10 @@ describe('Request', function () {
       requireStub.withArgs('https').returns({ request: requestStub, on: sinon.stub() });
       requireStub.withArgs('./responsehandler').returns(responseHandlerFake);
 
-      callbackSpy = sinon.spy();
+      callback = sinon.expectation.create().once();
 
       var request = RequestHandler(null, requireStub);
-      request.request('POST', path, body, 798, callbackSpy);
+      request.request('POST', path, body, 798, callback);
     });
 
     it('should call the request with the POST method option', function () {
@@ -238,13 +233,11 @@ describe('Request', function () {
     });
 
     it('should write the request body to the request', function () {
-      sinon.assert.calledOnce(requestFake.write);
       sinon.assert.calledWith(requestFake.write, body);
     });
 
     it('should have called the callback', function () {
-      sinon.assert.calledOnce(callbackSpy);
-      sinon.assert.calledWith(callbackSpy, null, responseBody);
+      sinon.assert.calledWith(callback, null, responseBody);
     });
 
   });
@@ -257,14 +250,14 @@ describe('Request', function () {
     var requestFake;
     var requestStub;
     var responseHandlerFake;
-    var callbackSpy;
+    var callback;
 
     before(function () {
       path = 'who/do/we/appreciate';
       body = 'I am xml body';
       responseBody = 'I am response body';
 
-      requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.spy() };
+      requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.expectation.create().once() };
 
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
       responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
@@ -273,10 +266,10 @@ describe('Request', function () {
       requireStub.withArgs('https').returns({ request: requestStub, on: sinon.stub() });
       requireStub.withArgs('./responsehandler').returns(responseHandlerFake);
 
-      callbackSpy = sinon.spy();
+      callback = sinon.expectation.create().once();
 
       var request = RequestHandler(null, requireStub);
-      request.request('PUT', path, body, 3132, callbackSpy);
+      request.request('PUT', path, body, 3132, callback);
     });
 
     it('should call the request with the POST method option', function () {
@@ -296,13 +289,11 @@ describe('Request', function () {
     });
 
     it('should write the request body to the request', function () {
-      sinon.assert.calledOnce(requestFake.write);
       sinon.assert.calledWith(requestFake.write, body);
     });
 
     it('should have called the callback', function () {
-      sinon.assert.calledOnce(callbackSpy);
-      sinon.assert.calledWith(callbackSpy, null, responseBody);
+      sinon.assert.calledWith(callback, null, responseBody);
     });
 
   });
@@ -311,7 +302,7 @@ describe('Request', function () {
 
     var requestError;
     var requestFake;
-    var callbackSpy;
+    var callback;
 
     before(function () {
       requestError = 'an error';
@@ -326,15 +317,14 @@ describe('Request', function () {
       requireStub.withArgs('querystring').returns({ stringify: sinon.stub() });
       requireStub.withArgs('./responsehandler').returns(null);
 
-      callbackSpy = sinon.spy();
+      callback = sinon.expectation.create().once();
 
       var request = RequestHandler(null, requireStub);
-      request.request('PLOP', '/path', {}, 3132, callbackSpy);
+      request.request('PLOP', '/path', {}, 3132, callback);
     });
 
     it('should have called the callback with the expected error', function () {
-      sinon.assert.calledOnce(callbackSpy);
-      sinon.assert.calledWith(callbackSpy, requestError);
+      sinon.assert.calledWith(callback, requestError);
     });
 
   });
@@ -344,7 +334,7 @@ describe('Request', function () {
     var timeout;
     var socketFake;
     var requestFake;
-    var callbackSpy;
+    var callback;
 
     before(function () {
       timeout = 243;
@@ -362,10 +352,10 @@ describe('Request', function () {
       requireStub.withArgs('querystring').returns({ stringify: sinon.stub() });
       requireStub.withArgs('./responsehandler').returns(null);
 
-      callbackSpy = sinon.spy();
+      callback = sinon.expectation.create().never();
 
       var request = RequestHandler({ timeout: timeout }, requireStub);
-      request.request('asdkj', '/290348nj', {}, 215, callbackSpy);
+      request.request('asdkj', '/290348nj', {}, 215, callback);
     });
 
     it('should have set a socket timeout value', function () {
@@ -377,9 +367,8 @@ describe('Request', function () {
       requestFake.abort.verify();
     });
 
-    it('should have called the callback with a timeout error', function () {
-      sinon.assert.calledOnce(callbackSpy);
-      sinon.assert.calledWith(callbackSpy, sinon.match.instanceOf(Error));
+    it('should have not called the callback', function () {
+      callback.verify();
     });
 
   });
@@ -391,7 +380,7 @@ describe('Request', function () {
     before(function () {
       var requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.stub() };
 
-      requestStub = sinon.stub().returns(requestFake);
+      requestStub = sinon.expectation.create().once().returns(requestFake);
 
       var requireStub = sinon.stub();
       requireStub.withArgs('http').returns({ request: requestStub, on: sinon.stub() });
@@ -402,7 +391,7 @@ describe('Request', function () {
     });
 
     it('should have called request on the http module', function () {
-      sinon.assert.calledOnce(requestStub);
+      requestStub.verify();
     });
 
   });

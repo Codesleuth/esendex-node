@@ -2,10 +2,10 @@ var config = require('./config'),
     esendex = require('../')(config);
 
 var messages = {
-  accountreference: "DevTestLive",
+  accountreference: config.accountreference,
   message: [{
-    to: "04656698563",
-    body: "something"
+    to: "07896563254",
+    body: "Every message matters!"
   }]
 };
 
