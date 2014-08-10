@@ -8,7 +8,7 @@ A work-in-progress simplistic client library for the [Esendex](http://esendex.co
 
 ## Getting Started
 
-1. Clone the repo: `git clone https://github.com/codesleuth/esendex-node && cd esendex-node`
+1. Install via npm: `npm install esendex`
 2. Install the dependencies: `npm install`
 3. Use!
 
@@ -25,7 +25,15 @@ esendex.messages.get({count: 3}, function (err, messages) {
 
 ## Example Scripts
 
-See the [examples](https://github.com/Codesleuth/esendex-node/tree/master/examples).
+There's a number of example scripts that show the client library in action. Take a look at the  [examples directory](https://github.com/Codesleuth/esendex-node/tree/master/examples).
+
+## Contributions
+
+Pull requests are welcome, but there are some rules:
+
+* Please adhere to the coding style implied from existing code
+* Run `gulp` to ensure your code is lint free and all tests pass before you push
+* Please ensure 100% unit test coverage for any changes (examples folder exempt for now)
 
 [npm-image]: http://img.shields.io/npm/v/esendex.svg
 [npm-url]: https://npmjs.org/package/esendex
