@@ -69,6 +69,64 @@ describe('Messages', function () {
 
   });
 
+  describe('get when request error', function () {
+
+    var requestError;
+    var callbackSpy;
+
+    before(function () {
+      requestError = new Error('some request error');
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(4, requestError)
+        }
+      };
+      callbackSpy = sinon.spy();
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./xmlparser').returns(sinon.stub());
+      requireStub.returns(sinon.spy());
+
+      var messages = Messages(esendexFake, requireStub);
+      messages.get(null, callbackSpy);
+    });
+
+    it('should call the callback with the error', function () {
+      sinon.assert.calledWith(callbackSpy, requestError);
+    });
+
+  });
+
+  describe('get when parser error', function () {
+
+    var parserError;
+    var callbackSpy;
+
+    before(function () {
+      parserError = new Error('some parser error');
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(4, null, 'some response data')
+        }
+      };
+      callbackSpy = sinon.spy();
+
+      var parserStub = sinon.stub().callsArgWith(1, parserError);
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
+      requireStub.returns(sinon.spy());
+
+      var messages = Messages(esendexFake, requireStub);
+      messages.get(null, callbackSpy);
+    });
+
+    it('should call the callback with the error', function () {
+      sinon.assert.calledWith(callbackSpy, parserError);
+    });
+
+  });
+
   describe('send', function () {
 
     var requestXml;
@@ -120,6 +178,67 @@ describe('Messages', function () {
 
     it('should call the callback with the parsed messagedispatcher response', function () {
       sinon.assert.calledWith(callbackSpy, null, responseObject.messageheaders);
+    });
+
+  });
+
+  describe('send when request error', function () {
+
+    var requestError;
+    var callbackSpy;
+
+    before(function () {
+      requestError = new Error('some request error');
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(4, requestError)
+        }
+      };
+      callbackSpy = sinon.spy();
+
+      var builderStub = sinon.stub().returns(sinon.stub().returns('akjshdjsahd'));
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./xmlparser').returns(sinon.stub());
+      requireStub.withArgs('./xmlbuilder').returns(builderStub);
+
+      var messages = Messages(esendexFake, requireStub);
+      messages.send('asdsadd', callbackSpy);
+    });
+
+    it('should call the callback with the error', function () {
+      sinon.assert.calledWith(callbackSpy, requestError);
+    });
+
+  });
+
+  describe('send when parser error', function () {
+
+    var parserError;
+    var callbackSpy;
+
+    before(function () {
+      parserError = new Error('some parser error');
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(4, null, 'some response data')
+        }
+      };
+      callbackSpy = sinon.spy();
+
+      var parserStub = sinon.stub().callsArgWith(1, parserError);
+      var builderStub = sinon.stub().returns(sinon.stub().returns('akjshdjsahd'));
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
+      requireStub.withArgs('./xmlbuilder').returns(builderStub);
+
+      var messages = Messages(esendexFake, requireStub);
+      messages.send('dgdfg', callbackSpy);
+    });
+
+    it('should call the callback with the error', function () {
+      sinon.assert.calledWith(callbackSpy, parserError);
     });
 
   });

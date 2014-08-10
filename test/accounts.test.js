@@ -68,4 +68,60 @@ describe('Accounts', function () {
 
   });
 
+  describe('get when request error', function () {
+
+    var requestError;
+    var callbackSpy;
+
+    before(function () {
+      requestError = new Error('some request error');
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(4, requestError)
+        }
+      };
+      callbackSpy = sinon.spy();
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./xmlparser').returns(sinon.stub());
+
+      var accounts = Accounts(esendexFake, requireStub);
+      accounts.get(null, callbackSpy);
+    });
+
+    it('should call the callback with the error', function () {
+      sinon.assert.calledWith(callbackSpy, requestError);
+    });
+
+  });
+
+  describe('get when parser error', function () {
+
+    var parserError;
+    var callbackSpy;
+
+    before(function () {
+      parserError = new Error('some parser error');
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(4, null, 'some response data')
+        }
+      };
+      callbackSpy = sinon.spy();
+
+      var parserStub = sinon.stub().callsArgWith(1, parserError);
+
+      var requireStub = sinon.stub();
+      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
+
+      var accounts = Accounts(esendexFake, requireStub);
+      accounts.get(null, callbackSpy);
+    });
+
+    it('should call the callback with the error', function () {
+      sinon.assert.calledWith(callbackSpy, parserError);
+    });
+
+  });
+
 });
