@@ -1,6 +1,6 @@
 var assert = require('assert'),
-    sinon = require('sinon');
-var XmlBuilder = require('../lib/xmlbuilder');
+    sinon = require('sinon'),
+    proxyquire = require('proxyquire').noCallThru();
 
 describe('XML Builder', function () {
 
@@ -20,8 +20,8 @@ describe('XML Builder', function () {
     builderStub = sinon.stub().returns({ buildObject: buildObjectStub });
     xml2jsFake = { Builder: builderStub };
 
-    var requireStub = sinon.stub().returns(xml2jsFake);
-    var buildObjectFunc = XmlBuilder(rootName, requireStub);
+    var XmlBuilder = proxyquire('../lib/xmlbuilder', { 'xml2js': xml2jsFake });
+    var buildObjectFunc = XmlBuilder(rootName);
     result = buildObjectFunc(objectToBuild);
   });
 

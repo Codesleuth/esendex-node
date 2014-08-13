@@ -1,6 +1,6 @@
 var assert = require('assert'),
-    sinon = require('sinon');
-var RequestHandler = require('../lib/requesthandler');
+    sinon = require('sinon'),
+    proxyquire = require('proxyquire').noCallThru();
 
 describe('Request', function () {
 
@@ -9,6 +9,7 @@ describe('Request', function () {
     var request;
 
     before(function () {
+      var RequestHandler = proxyquire('../lib/requesthandler', {});
       request = RequestHandler();
     });
 
@@ -43,6 +44,7 @@ describe('Request', function () {
         username: 'asdasdads',
         password: 'sdfsdffs'
       };
+      var RequestHandler = proxyquire('../lib/requesthandler', {});
       request = RequestHandler(options);
     });
 
@@ -68,6 +70,7 @@ describe('Request', function () {
         host: 'sdfsdf',
         password: 'sdfsdffs'
       };
+      var RequestHandler = proxyquire('../lib/requesthandler', {});
       request = RequestHandler(options);
     });
 
@@ -142,12 +145,12 @@ describe('Request', function () {
 
       callback = sinon.expectation.create().once();
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('https').returns({ request: requestStub });
-      requireStub.withArgs('querystring').returns({ stringify: stringifyStub });
-      requireStub.withArgs('./responsehandler').returns(responseHandlerFake);
-
-      var request = RequestHandler(options, requireStub);
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'https': { request: requestStub },
+        'querystring': { stringify: stringifyStub },
+        './responsehandler': responseHandlerFake
+      });
+      var request = RequestHandler(options);
       request.request(method, path, data, expectedStatus, callback);
     });
 
@@ -206,13 +209,13 @@ describe('Request', function () {
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
       responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('https').returns({ request: requestStub, on: sinon.stub() });
-      requireStub.withArgs('./responsehandler').returns(responseHandlerFake);
-
       callback = sinon.expectation.create().once();
 
-      var request = RequestHandler(null, requireStub);
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'https': { request: requestStub },
+        './responsehandler': responseHandlerFake
+      });
+      var request = RequestHandler(null);
       request.request('POST', path, body, 798, callback);
     });
 
@@ -262,13 +265,13 @@ describe('Request', function () {
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
       responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('https').returns({ request: requestStub, on: sinon.stub() });
-      requireStub.withArgs('./responsehandler').returns(responseHandlerFake);
-
       callback = sinon.expectation.create().once();
 
-      var request = RequestHandler(null, requireStub);
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'https': { request: requestStub },
+        './responsehandler': responseHandlerFake
+      });
+      var request = RequestHandler(null);
       request.request('PUT', path, body, 3132, callback);
     });
 
@@ -312,14 +315,12 @@ describe('Request', function () {
 
       var requestStub = sinon.stub().returns(requestFake);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('https').returns({ request: requestStub, on: sinon.stub() });
-      requireStub.withArgs('querystring').returns({ stringify: sinon.stub() });
-      requireStub.withArgs('./responsehandler').returns(null);
-
       callback = sinon.expectation.create().once();
 
-      var request = RequestHandler(null, requireStub);
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'https': { request: requestStub }
+      });
+      var request = RequestHandler(null);
       request.request('PLOP', '/path', {}, 3132, callback);
     });
 
@@ -347,14 +348,12 @@ describe('Request', function () {
 
       var requestStub = sinon.stub().returns(requestFake);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('https').returns({ request: requestStub, on: sinon.stub() });
-      requireStub.withArgs('querystring').returns({ stringify: sinon.stub() });
-      requireStub.withArgs('./responsehandler').returns(null);
-
       callback = sinon.expectation.create().never();
 
-      var request = RequestHandler({ timeout: timeout }, requireStub);
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'https': { request: requestStub }
+      });
+      var request = RequestHandler({ timeout: timeout });
       request.request('asdkj', '/290348nj', {}, 215, callback);
     });
 
@@ -382,11 +381,10 @@ describe('Request', function () {
 
       requestStub = sinon.expectation.create().once().returns(requestFake);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('http').returns({ request: requestStub, on: sinon.stub() });
-      requireStub.withArgs('./responsehandler').returns(null);
-
-      var request = RequestHandler({ https: false }, requireStub);
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'http': { request: requestStub }
+      });
+      var request = RequestHandler({ https: false });
       request.request('PUT', '/290348nj', {}, 215, sinon.spy());
     });
 
