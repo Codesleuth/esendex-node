@@ -1,6 +1,6 @@
 var assert = require('assert'),
-    sinon = require('sinon');
-var Messages = require('../lib/messages');
+    sinon = require('sinon'),
+    proxyquire = require('proxyquire').noCallThru();
 
 describe('Messages', function () {
 
@@ -11,6 +11,7 @@ describe('Messages', function () {
 
     before(function () {
       esendex = {};
+      var Messages = proxyquire('../lib/messages', {});
       messages = Messages(esendex);
     });
 
@@ -47,11 +48,8 @@ describe('Messages', function () {
       responseObject = { messageheaders: 'messageheaders' };
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
-      requireStub.returns(sinon.spy());
-
-      var messages = Messages(esendexFake, requireStub);
+      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
+      var messages = Messages(esendexFake);
       messages.get(options, callbackSpy);
     });
 
@@ -83,11 +81,8 @@ describe('Messages', function () {
       };
       callbackSpy = sinon.spy();
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub());
-      requireStub.returns(sinon.spy());
-
-      var messages = Messages(esendexFake, requireStub);
+      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub() });
+      var messages = Messages(esendexFake);
       messages.get(null, callbackSpy);
     });
 
@@ -113,11 +108,8 @@ describe('Messages', function () {
 
       var parserStub = sinon.stub().callsArgWith(1, parserError);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
-      requireStub.returns(sinon.spy());
-
-      var messages = Messages(esendexFake, requireStub);
+      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
+      var messages = Messages(esendexFake);
       messages.get(null, callbackSpy);
     });
 
@@ -154,13 +146,13 @@ describe('Messages', function () {
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
       builderStub = sinon.stub().returns(buildObjectStub);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
-      requireStub.withArgs('./xmlbuilder').returns(builderStub);
-
       messagesToSend = { some: 'messages' };
 
-      var messages = Messages(esendexFake, requireStub);
+      var Messages = proxyquire('../lib/messages', { 
+        './xmlparser': sinon.stub().returns(parserStub),
+        './xmlbuilder': builderStub
+      });
+      var messages = Messages(esendexFake);
       messages.send(messagesToSend, callbackSpy);
     });
 
@@ -198,11 +190,11 @@ describe('Messages', function () {
 
       var builderStub = sinon.stub().returns(sinon.stub().returns('akjshdjsahd'));
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub());
-      requireStub.withArgs('./xmlbuilder').returns(builderStub);
-
-      var messages = Messages(esendexFake, requireStub);
+      var Messages = proxyquire('../lib/messages', { 
+        './xmlparser': sinon.stub(),
+        './xmlbuilder': builderStub
+      });
+      var messages = Messages(esendexFake);
       messages.send('asdsadd', callbackSpy);
     });
 
@@ -229,11 +221,11 @@ describe('Messages', function () {
       var parserStub = sinon.stub().callsArgWith(1, parserError);
       var builderStub = sinon.stub().returns(sinon.stub().returns('akjshdjsahd'));
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
-      requireStub.withArgs('./xmlbuilder').returns(builderStub);
-
-      var messages = Messages(esendexFake, requireStub);
+      var Messages = proxyquire('../lib/messages', { 
+        './xmlparser': sinon.stub().returns(parserStub),
+        './xmlbuilder': builderStub
+      });
+      var messages = Messages(esendexFake);
       messages.send('dgdfg', callbackSpy);
     });
 

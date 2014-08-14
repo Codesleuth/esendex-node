@@ -1,6 +1,6 @@
 var assert = require('assert'),
-    sinon = require('sinon');
-var Accounts = require('../lib/accounts');
+    sinon = require('sinon'),
+    proxyquire = require('proxyquire').noCallThru();
 
 describe('Accounts', function () {
 
@@ -11,7 +11,8 @@ describe('Accounts', function () {
 
     before(function () {
       esendex = {};
-      accounts = Accounts(esendex, sinon.stub().returns(sinon.spy()));
+      var Accounts = proxyquire('../lib/accounts', { './xmlparser': sinon.stub().returns(sinon.spy()) });
+      accounts = Accounts(esendex);
     });
 
     it('should create an instance of the accounts api', function () {
@@ -47,10 +48,8 @@ describe('Accounts', function () {
       responseObject = { accounts: 'accounts' };
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
-
-      var accounts = Accounts(esendexFake, requireStub);
+      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub().returns(parserStub) });
+      var accounts = Accounts(esendexFake);
       accounts.get(options, callbackSpy);
     });
 
@@ -82,10 +81,8 @@ describe('Accounts', function () {
       };
       callbackSpy = sinon.spy();
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub());
-
-      var accounts = Accounts(esendexFake, requireStub);
+      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub() });
+      var accounts = Accounts(esendexFake);
       accounts.get(null, callbackSpy);
     });
 
@@ -111,10 +108,8 @@ describe('Accounts', function () {
 
       var parserStub = sinon.stub().callsArgWith(1, parserError);
 
-      var requireStub = sinon.stub();
-      requireStub.withArgs('./xmlparser').returns(sinon.stub().returns(parserStub));
-
-      var accounts = Accounts(esendexFake, requireStub);
+      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub().returns(parserStub) });
+      var accounts = Accounts(esendexFake);
       accounts.get(null, callbackSpy);
     });
 

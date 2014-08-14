@@ -1,6 +1,6 @@
 var assert = require('assert'),
-    sinon = require('sinon');
-var XmlParser = require('../lib/xmlparser');
+    sinon = require('sinon'),
+    proxyquire = require('proxyquire').noCallThru();
 
 describe('XML Parser', function () {
 
@@ -14,8 +14,8 @@ describe('XML Parser', function () {
     parserStub = sinon.stub().returns({ parseString: parseStringFake });
     xml2jsFake = { Parser: parserStub };
 
-    var requireStub = sinon.stub().returns(xml2jsFake);
-    result = XmlParser(requireStub);
+    var XmlParser = proxyquire('../lib/xmlparser', { 'xml2js': xml2jsFake });
+    result = XmlParser();
   });
 
   it('should create a parser with the expected options', function () {
