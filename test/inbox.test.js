@@ -167,7 +167,6 @@ describe('Inbox', function () {
     var options;
     var expectedPath;
     var callbackSpy;
-    var parserStub;
 
     before(function () {
       responseXml = 'jargon';
@@ -180,19 +179,14 @@ describe('Inbox', function () {
       options = { id: 'd0c8c6f0-6e8b-4ec7-8ad3-c1f8109e753e', read: true };
       expectedPath = '/v1.0/inbox/messages/' + options.id;
       callbackSpy = sinon.spy();
-      parserStub = sinon.stub().callsArgWith(1, null, '');
 
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub().returns(parserStub) });
+      var Inbox = proxyquire('../lib/inbox', {});
       var inbox = Inbox(esendexFake);
       inbox.update(options, callbackSpy);
     });
 
     it('should call the inbox message endpoint', function () {
       sinon.assert.calledWith(requestStub, 'PUT', expectedPath, { action: 'read' }, null, 200, sinon.match.func);
-    });
-
-    it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback without a response', function () {
@@ -208,7 +202,6 @@ describe('Inbox', function () {
     var options;
     var expectedPath;
     var callbackSpy;
-    var parserStub;
 
     before(function () {
       responseXml = 'jargon';
@@ -221,19 +214,14 @@ describe('Inbox', function () {
       options = { id: 'b13bf37b-9196-4837-8eaf-edd4bc2a7021', read: false };
       expectedPath = '/v1.0/inbox/messages/' + options.id;
       callbackSpy = sinon.spy();
-      parserStub = sinon.stub().callsArgWith(1, null, '');
 
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub().returns(parserStub) });
+      var Inbox = proxyquire('../lib/inbox', {});
       var inbox = Inbox(esendexFake);
       inbox.update(options, callbackSpy);
     });
 
     it('should call the inbox message endpoint', function () {
       sinon.assert.calledWith(requestStub, 'PUT', expectedPath, { action: 'unread' }, null, 200, sinon.match.func);
-    });
-
-    it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback without a response', function () {
@@ -256,40 +244,13 @@ describe('Inbox', function () {
       };
       callbackSpy = sinon.spy();
 
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub() });
+      var Inbox = proxyquire('../lib/inbox', {});
       var inbox = Inbox(esendexFake);
       inbox.update({ id: 'fsf', read: false }, callbackSpy);
     });
 
     it('should call the callback with the error', function () {
       sinon.assert.calledWith(callbackSpy, requestError);
-    });
-
-  });
-
-  describe('mark read or unread when parser error', function () {
-
-    var parserError;
-    var callbackSpy;
-
-    before(function () {
-      parserError = new Error('some parser error');
-      var esendexFake = {
-        requesthandler: {
-          request: sinon.stub().callsArgWith(5, null, 'some response data')
-        }
-      };
-      callbackSpy = sinon.spy();
-
-      var parserStub = sinon.stub().callsArgWith(1, parserError);
-
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub().returns(parserStub) });
-      var inbox = Inbox(esendexFake);
-      inbox.update({ id: 'asda', read: true }, callbackSpy);
-    });
-
-    it('should call the callback with the error', function () {
-      sinon.assert.calledWith(callbackSpy, parserError);
     });
 
   });

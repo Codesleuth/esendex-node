@@ -119,4 +119,37 @@ describe('Batches', function () {
 
   });
 
+  describe('cancel', function () {
+
+    var requestStub;
+    var id;
+    var expectedPath;
+    var callbackSpy;
+
+    before(function () {
+      requestStub = sinon.stub().callsArgWith(5, null, '');
+      var esendexFake = {
+        requesthandler: {
+          request: requestStub
+        }
+      };
+      id = '32c43729-6225-47f7-9359-521406fc29ac';
+      expectedPath = '/v1.0/messagebatches/' + id;
+      callbackSpy = sinon.spy();
+
+      var Batches = proxyquire('../lib/batches', {});
+      var batches = Batches(esendexFake);
+      batches.cancel(id, callbackSpy);
+    });
+
+    it('should call the messagebatches endpoint', function () {
+      sinon.assert.calledWith(requestStub, 'DELETE', expectedPath, null, null, 204, sinon.match.func);
+    });
+
+    it('should call the callback with the parsed messagebatches response', function () {
+      sinon.assert.calledWith(callbackSpy, null);
+    });
+
+  });
+
 });
