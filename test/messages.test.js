@@ -282,7 +282,6 @@ describe('Messages', function () {
 
     var responseXml;
     var requestStub;
-    var messageId;
     var expectedPath;
     var callbackSpy;
     var responseObject;
@@ -296,7 +295,7 @@ describe('Messages', function () {
           request: requestStub
         }
       };
-      messageId = 'e0ad7982-2670-4a91-9ab9-12687eaacb96';
+      var messageId = 'e0ad7982-2670-4a91-9ab9-12687eaacb96';
       expectedPath = '/v1.0/messageheaders/' + messageId + '/body';
       callbackSpy = sinon.spy();
       responseObject = { messagebody: 'messagebody' };

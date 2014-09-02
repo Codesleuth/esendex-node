@@ -29,6 +29,11 @@ esendex.inbox.get(options, function (err, messages) {
         if (err) return console.log(err);
         console.log('Marked message %s as unread!', msg.id);
       });
+
+      // esendex.inbox.delete(msg.id, function (err) {
+      //   if (err) return console.log(err);
+      //   console.log('Deleted message %s!', msg.id);
+      // });
     });
   });
 });

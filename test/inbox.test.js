@@ -197,15 +197,13 @@ describe('Inbox', function () {
 
   describe('mark unread status', function () {
 
-    var responseXml;
     var requestStub;
     var options;
     var expectedPath;
     var callbackSpy;
 
     before(function () {
-      responseXml = 'jargon';
-      requestStub = sinon.stub().callsArgWith(5, null, responseXml);
+      requestStub = sinon.stub().callsArgWith(5, null, '');
       var esendexFake = {
         requesthandler: {
           request: requestStub
@@ -246,7 +244,64 @@ describe('Inbox', function () {
 
       var Inbox = proxyquire('../lib/inbox', {});
       var inbox = Inbox(esendexFake);
-      inbox.update({ id: 'fsf', read: false }, callbackSpy);
+      inbox.update({ id: 'sdfsf', read: false }, callbackSpy);
+    });
+
+    it('should call the callback with the error', function () {
+      sinon.assert.calledWith(callbackSpy, requestError);
+    });
+
+  });
+
+  describe('delete inbox message', function () {
+
+    var requestStub;
+    var expectedPath;
+    var callbackSpy;
+
+    before(function () {
+      requestStub = sinon.stub().callsArgWith(5, null, '');
+      var esendexFake = {
+        requesthandler: {
+          request: requestStub
+        }
+      };
+      var id = 'b13bf37b-9196-4837-8eaf-edd4bc2a7021';
+      expectedPath = '/v1.0/inbox/messages/' + id;
+      callbackSpy = sinon.spy();
+
+      var Inbox = proxyquire('../lib/inbox', {});
+      var inbox = Inbox(esendexFake);
+      inbox.delete(id, callbackSpy);
+    });
+
+    it('should call the inbox message endpoint', function () {
+      sinon.assert.calledWith(requestStub, 'DELETE', expectedPath, null, null, 200, sinon.match.func);
+    });
+
+    it('should call the callback without a response', function () {
+      sinon.assert.calledWith(callbackSpy, null);
+    });
+
+  });
+
+  describe('delete inbox message when request error', function () {
+
+    var requestError;
+    var callbackSpy;
+
+    before(function () {
+      requestError = new Error('some request error');
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(5, requestError)
+        }
+      };
+      callbackSpy = sinon.spy();
+
+      var Inbox = proxyquire('../lib/inbox', {});
+      var inbox = Inbox(esendexFake);
+      inbox.delete('sdfsdsdfds', callbackSpy);
     });
 
     it('should call the callback with the error', function () {

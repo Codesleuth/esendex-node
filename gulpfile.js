@@ -5,19 +5,22 @@ var gulp = require('gulp'),
 gulp.task('jshint:tests', function () {
   return gulp.src(['test/**/*.test.js'])
     .pipe(jshint('./test/.jshintrc'))
-    .pipe(jshint.reporter('default'));
+    .pipe(jshint.reporter('default'))
+    .pipe(jshint.reporter("fail"));
 });
  
 gulp.task('jshint:code', function () {
   return gulp.src(['gulpfile.js', './lib/**/*.js'])
     .pipe(jshint('./.jshintrc'))
-    .pipe(jshint.reporter('default'));
+    .pipe(jshint.reporter('default'))
+    .pipe(jshint.reporter("fail"));
 });
  
 gulp.task('jshint:examples', function () {
   return gulp.src(['./examples/*.js'])
     .pipe(jshint('./.jshintrc'))
-    .pipe(jshint.reporter('default'));
+    .pipe(jshint.reporter('default'))
+    .pipe(jshint.reporter("fail"));
 });
 
 gulp.task('mochaTest', ['jshint:tests', 'jshint:code', 'jshint:examples'], function () {
