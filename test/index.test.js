@@ -113,4 +113,26 @@ describe('Esendex', function () {
 
   });
 
+  describe('batches', function () {
+
+    var esendex;
+    var batchesSpy;
+
+    before(function () {
+      batchesSpy = sinon.spy();
+
+      var Esendex = proxyquire('../', { './batches': batchesSpy });
+      esendex = Esendex(null);
+    });
+
+    it('should expose an instance of the batches api', function () {
+      sinon.assert.called(batchesSpy);
+    });
+
+    it('should pass through itself to the batches api', function () {
+      sinon.assert.calledWith(batchesSpy, esendex);
+    });
+
+  });
+
 });
