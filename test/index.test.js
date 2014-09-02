@@ -91,4 +91,26 @@ describe('Esendex', function () {
 
   });
 
+  describe('inbox', function () {
+
+    var esendex;
+    var inboxSpy;
+
+    before(function () {
+      inboxSpy = sinon.spy();
+
+      var Esendex = proxyquire('../', { './inbox': inboxSpy });
+      esendex = Esendex(null);
+    });
+
+    it('should expose an instance of the inbox api', function () {
+      sinon.assert.called(inboxSpy);
+    });
+
+    it('should pass through itself to the inbox api', function () {
+      sinon.assert.calledWith(inboxSpy, esendex);
+    });
+
+  });
+
 });
