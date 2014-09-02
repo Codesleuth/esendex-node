@@ -119,4 +119,45 @@ describe('Inbox', function () {
 
   });
 
+  describe('get for specific account', function () {
+
+    var responseXml;
+    var requestStub;
+    var options;
+    var callbackSpy;
+    var responseObject;
+    var parserStub;
+
+    before(function () {
+      responseXml = 'jargon';
+      requestStub = sinon.stub().callsArgWith(4, null, responseXml);
+      var esendexFake = {
+        requesthandler: {
+          request: requestStub
+        }
+      };
+      options = { accountreference: 'EX00PEAR', banana: 'pineapple' };
+      callbackSpy = sinon.spy();
+      responseObject = { messageheaders: 'messageheaders' };
+      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+
+      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub().returns(parserStub) });
+      var inbox = Inbox(esendexFake);
+      inbox.get(options, callbackSpy);
+    });
+
+    it('should call the inbox endpoint', function () {
+      sinon.assert.calledWith(requestStub, 'GET', '/v1.0/inbox/EX00PEAR/messages', options, 200, sinon.match.func);
+    });
+
+    it('should parse the xml response', function () {
+      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+    });
+
+    it('should call the callback with the parsed inbox response', function () {
+      sinon.assert.calledWith(callbackSpy, null, responseObject.messageheaders);
+    });
+
+  });
+
 });
