@@ -1,6 +1,6 @@
 {
   "name": "esendex",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Esendex Node.js client library.",
   "main": "./lib/index.js",
   "scripts": {
@@ -14,6 +14,15 @@
   "bugs": {
     "url": "https://github.com/codesleuth/esendex-node/issues"
   },
+  "keywords": [
+    "sms", 
+    "business", 
+    "node", 
+    "js", 
+    "sdk", 
+    "rest", 
+    "api"
+  ],
   "engines": {
     "node": ">=0.10"
   },
