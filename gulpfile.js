@@ -22,7 +22,7 @@ gulp.task('jshint:examples', function () {
 
 gulp.task('mochaTest', ['jshint:tests', 'jshint:code', 'jshint:examples'], function () {
   return gulp.src('test/**/*.test.js', {read: false})
-    .pipe(mocha({reporter: 'spec'}));
+    .pipe(mocha({reporter: 'dot'}));
 });
 
 gulp.task('default', ['jshint:tests', 'jshint:code', 'mochaTest']);

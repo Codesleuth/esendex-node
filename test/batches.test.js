@@ -37,7 +37,7 @@ describe('Batches', function () {
 
     before(function () {
       responseXml = 'could be anything really';
-      requestStub = sinon.stub().callsArgWith(4, null, responseXml);
+      requestStub = sinon.stub().callsArgWith(5, null, responseXml);
       var esendexFake = {
         requesthandler: {
           request: requestStub
@@ -54,7 +54,7 @@ describe('Batches', function () {
     });
 
     it('should call the messagebatches endpoint', function () {
-      sinon.assert.calledWith(requestStub, 'GET', '/v1.0/messagebatches', options, 200, sinon.match.func);
+      sinon.assert.calledWith(requestStub, 'GET', '/v1.0/messagebatches', options, null, 200, sinon.match.func);
     });
 
     it('should parse the xml response', function () {
@@ -76,7 +76,7 @@ describe('Batches', function () {
       requestError = new Error('some request error');
       var esendexFake = {
         requesthandler: {
-          request: sinon.stub().callsArgWith(4, requestError)
+          request: sinon.stub().callsArgWith(5, requestError)
         }
       };
       callbackSpy = sinon.spy();
@@ -101,7 +101,7 @@ describe('Batches', function () {
       parserError = new Error('some parser error');
       var esendexFake = {
         requesthandler: {
-          request: sinon.stub().callsArgWith(4, null, 'some response data')
+          request: sinon.stub().callsArgWith(5, null, 'some response data')
         }
       };
       callbackSpy = sinon.spy();

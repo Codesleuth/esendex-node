@@ -96,7 +96,7 @@ describe('Request', function () {
     var expectedAuth;
     var method;
     var path;
-    var data;
+    var query;
     var expectedStatus;
     var callback;
     var requestStub;
@@ -120,7 +120,7 @@ describe('Request', function () {
 
       method = 'BAM';
       path = '/some/path';
-      data = {param1: 10, param2: 22};
+      query = {param1: 10, param2: 22};
       expectedStatus = 435;
       querystring = 'asdljhasdkljalkdjs';
       expectedPath = path + '?' + querystring;
@@ -151,11 +151,11 @@ describe('Request', function () {
         './responsehandler': responseHandlerFake
       });
       var request = RequestHandler(options);
-      request.request(method, path, data, expectedStatus, callback);
+      request.request(method, path, query, null, expectedStatus, callback);
     });
 
     it('should stringify the query string', function () {
-      sinon.assert.calledWith(stringifyStub, data);
+      sinon.assert.calledWith(stringifyStub, query);
     });
 
     it('should call http.request with the expected options', function () {
@@ -216,7 +216,7 @@ describe('Request', function () {
         './responsehandler': responseHandlerFake
       });
       var request = RequestHandler(null);
-      request.request('POST', path, body, 798, callback);
+      request.request('POST', path, null, body, 798, callback);
     });
 
     it('should call the request with the POST method option', function () {
@@ -237,6 +237,60 @@ describe('Request', function () {
 
     it('should write the request body to the request', function () {
       sinon.assert.calledWith(requestFake.write, body);
+    });
+
+    it('should have called the callback', function () {
+      sinon.assert.calledWith(callback, null, responseBody);
+    });
+
+  });
+
+describe('POST request without a request body', function () {
+
+    var path;
+    var responseBody;
+    var requestFake;
+    var requestStub;
+    var responseHandlerFake;
+    var callback;
+
+    before(function () {
+      path = '1/2/3/4';
+      responseBody = 'This is the response body content';
+
+      requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.expectation.create().once() };
+
+      requestStub = sinon.stub().callsArg(1).returns(requestFake);
+      responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
+
+      callback = sinon.expectation.create().once();
+
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'https': { request: requestStub },
+        './responsehandler': responseHandlerFake
+      });
+      var request = RequestHandler(null);
+      request.request('POST', path, null, null, 798, callback);
+    });
+
+    it('should call the request with the POST method option', function () {
+      sinon.assert.calledWith(requestStub, sinon.match({ method: 'POST' }));
+    });
+
+    it('should call the request with an unmodified path option', function () {
+      sinon.assert.calledWith(requestStub, sinon.match({ path: path }));
+    });
+
+    it('should call the request with body specific headers', function () {
+      sinon.assert.calledWith(requestStub, sinon.match({
+        headers: {
+          'Content-Type': 'application/xml',
+          'Content-Length': 0
+      }}));
+    });
+
+    it('should not write any request body', function () {
+      sinon.assert.notCalled(requestFake.write);
     });
 
     it('should have called the callback', function () {
@@ -272,7 +326,7 @@ describe('Request', function () {
         './responsehandler': responseHandlerFake
       });
       var request = RequestHandler(null);
-      request.request('PUT', path, body, 3132, callback);
+      request.request('PUT', path, null, body, 3132, callback);
     });
 
     it('should call the request with the POST method option', function () {
@@ -321,7 +375,7 @@ describe('Request', function () {
         'https': { request: requestStub }
       });
       var request = RequestHandler(null);
-      request.request('PLOP', '/path', {}, 3132, callback);
+      request.request('PLOP', '/path', null, null, 3132, callback);
     });
 
     it('should have called the callback with the expected error', function () {
@@ -354,7 +408,7 @@ describe('Request', function () {
         'https': { request: requestStub }
       });
       var request = RequestHandler({ timeout: timeout });
-      request.request('asdkj', '/290348nj', {}, 215, callback);
+      request.request('asdkj', '/290348nj', null, null, 215, callback);
     });
 
     it('should have set a socket timeout value', function () {
