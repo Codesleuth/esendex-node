@@ -67,6 +67,49 @@ describe('Messages', function () {
 
   });
 
+  describe('get specific message', function () {
+
+    var responseXml;
+    var requestStub;
+    var options;
+    var expectedPath;
+    var callbackSpy;
+    var responseObject;
+    var parserStub;
+
+    before(function () {
+      responseXml = 'could be anything really';
+      requestStub = sinon.stub().callsArgWith(4, null, responseXml);
+      var esendexFake = {
+        requesthandler: {
+          request: requestStub
+        }
+      };
+      options = { id: '6aa73324-1ac6-4f6f-b5df-9dec5bdd5d64', piano: 'violin' };
+      expectedPath = '/v1.0/messageheaders/' + options.id;
+      callbackSpy = sinon.spy();
+      responseObject = { messageheader: 'messageheader' };
+      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+
+      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
+      var messages = Messages(esendexFake);
+      messages.get(options, callbackSpy);
+    });
+
+    it('should call the messageheaders endpoint with the specific message id', function () {
+      sinon.assert.calledWith(requestStub, 'GET', expectedPath, sinon.match({ id: undefined }), 200, sinon.match.func);
+    });
+
+    it('should parse the xml response', function () {
+      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+    });
+
+    it('should call the callback with the parsed messageheader response', function () {
+      sinon.assert.calledWith(callbackSpy, null, responseObject.messageheader);
+    });
+
+  });
+
   describe('get when request error', function () {
 
     var requestError;
