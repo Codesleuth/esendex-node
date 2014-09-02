@@ -21,6 +21,14 @@ esendex.inbox.get(options, function (err, messages) {
   if (err) return console.log(err);
 
   messages.messageheader.map(function (msg) {
-    console.log(msg);
+    esendex.inbox.update({ id: msg.id, read: false }, function (err) {
+      if (err) return console.log(err);
+      console.log('Marked message %s as read!', msg.id);
+
+      esendex.inbox.update({ id: msg.id, read: true }, function (err) {
+        if (err) return console.log(err);
+        console.log('Marked message %s as unread!', msg.id);
+      });
+    });
   });
 });
