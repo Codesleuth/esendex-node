@@ -67,6 +67,49 @@ describe('Accounts', function () {
 
   });
 
+  describe('get specific account', function () {
+
+    var responseXml;
+    var requestStub;
+    var options;
+    var expectedPath;
+    var callbackSpy;
+    var responseObject;
+    var parserStub;
+
+    before(function () {
+      responseXml = 'not actually xml here';
+      requestStub = sinon.stub().callsArgWith(5, null, responseXml);
+      var esendexFake = {
+        requesthandler: {
+          request: requestStub
+        }
+      };
+      var options = { id: '1fecafcf-0c33-481c-bec8-7ca272ba71c3', crab: 'lobster' };
+      expectedPath = '/v1.0/accounts/' + options.id;
+      callbackSpy = sinon.spy();
+      responseObject = { accounts: 'accounts' };
+      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+
+      var Accounts = proxyquire('../lib/accounts', { './xmlparser': sinon.stub().returns(parserStub) });
+      var accounts = Accounts(esendexFake);
+      accounts.get(options, callbackSpy);
+    });
+
+    it('should call the accounts endpoint with the specific message id', function () {
+      sinon.assert.calledWith(requestStub, 'GET', expectedPath, sinon.match({ id: undefined }), null, 200, sinon.match.func);
+    });
+
+    it('should parse the xml response', function () {
+      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+    });
+
+    it('should call the callback with the parsed account response', function () {
+      sinon.assert.calledWith(callbackSpy, null, responseObject.account);
+    });
+
+  });
+
   describe('get when request error', function () {
 
     var requestError;

@@ -1,5 +1,6 @@
 var assert = require('assert'),
     sinon = require('sinon'),
+    isArray = require('util').isArray,
     proxyquire = require('proxyquire').noCallThru();
 
 describe('Messages', function () {
@@ -26,7 +27,7 @@ describe('Messages', function () {
 
   });
 
-  describe('get', function () {
+  describe('get all', function () {
 
     var responseXml;
     var requestStub;
@@ -45,7 +46,7 @@ describe('Messages', function () {
       };
       options = { dog: 'cat' };
       callbackSpy = sinon.spy();
-      responseObject = { messageheaders: 'messageheaders' };
+      responseObject = { messageheaders: { messageheader: ['messageheaders'] } };
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
 
       var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
@@ -63,6 +64,38 @@ describe('Messages', function () {
 
     it('should call the callback with the parsed messageheaders response', function () {
       sinon.assert.calledWith(callbackSpy, null, responseObject.messageheaders);
+    });
+
+  });
+
+  describe('get all with one message returned', function () {
+
+    var responseXml;
+    var requestStub;
+    var options;
+    var callbackSpy;
+    var responseObject;
+    var parserStub;
+
+    before(function () {
+      responseXml = 'jargon';
+      requestStub = sinon.stub().callsArgWith(5, null, responseXml);
+      var esendexFake = {
+        requesthandler: {
+          request: requestStub
+        }
+      };
+      callbackSpy = sinon.spy();
+      responseObject = { messageheaders: { messageheader: 'not an array' } };
+      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+
+      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
+      var messages = Messages(esendexFake);
+      messages.get({}, callbackSpy);
+    });
+
+    it('should return an array of a single message header', function () {
+      sinon.assert.calledWith(callbackSpy, null, { messageheader: sinon.match.array.and(sinon.match.has("length", 1)) });
     });
 
   });
@@ -162,7 +195,7 @@ describe('Messages', function () {
 
   });
 
-  describe('send', function () {
+  describe('send returns a single message', function () {
 
     var requestXml;
     var responseXml;
@@ -184,7 +217,7 @@ describe('Messages', function () {
         }
       };
       callbackSpy = sinon.spy();
-      responseObject = { messageheaders: 'messageheaders' };
+      responseObject = { messageheaders: { messageheader: 'a single message header' } };
       buildObjectStub = sinon.stub().returns(requestXml);
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
       builderStub = sinon.stub().returns(buildObjectStub);
@@ -213,6 +246,39 @@ describe('Messages', function () {
 
     it('should call the callback with the parsed messagedispatcher response', function () {
       sinon.assert.calledWith(callbackSpy, null, responseObject.messageheaders);
+    });
+
+    it('should return an array of a single sent message header', function () {
+      sinon.assert.calledWith(callbackSpy, null, { messageheader: sinon.match.array.and(sinon.match.has("length", 1)) });
+    });
+
+  });
+
+  describe('send returns multiple messages', function () {
+
+    var callbackSpy;
+
+    before(function () {
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(5, null, 'some message headers response')
+        }
+      };
+      callbackSpy = sinon.spy();
+      var responseObject = { messageheaders: { messageheader: ['an array of message header'] } };
+      var buildObjectStub = sinon.stub().returns('could be anything really');
+      var parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+
+      var Messages = proxyquire('../lib/messages', { 
+        './xmlparser': sinon.stub().returns(parserStub),
+        './xmlbuilder': sinon.stub().returns(buildObjectStub)
+      });
+      var messages = Messages(esendexFake);
+      messages.send({}, callbackSpy);
+    });
+
+    it('should return an array of a single sent message header', function () {
+      sinon.assert.calledWith(callbackSpy, null, { messageheader: sinon.match.array.and(sinon.match.has("length", 1)) });
     });
 
   });

@@ -28,5 +28,6 @@ node_modules
 .lock-wscript
 
 config.json
+config.integration.test.json
 
 coverage

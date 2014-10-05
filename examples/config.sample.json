@@ -1,3 +1,5 @@
+// Sample config file for examples.
+// Copy this file and name it "config.json"
 {
   "username": "your.email@company.com",
   "password": "super-secret-password",
