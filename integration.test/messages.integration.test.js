@@ -44,7 +44,7 @@ describe('Messages Integration', function () {
     });
   });
 
-  describe('send a message', function () {
+  describe.skip('send a message', function () {
 
     var response;
 
