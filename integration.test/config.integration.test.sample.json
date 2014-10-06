@@ -1,8 +1,0 @@
-// Sample config file for integration tests.
-// Copy this file and name it "config.integration.test.json"
-{
-  "username": "your.email@company.com",
-  "password": "super-secret-password",
-  "accountreference": "EX1234567",
-  "mobilenumber": "447000000000"
-}

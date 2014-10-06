@@ -1,7 +1,7 @@
 var assert = require('assert'),
     util = require('util'),
     Esendex = require('../'),
-    config = require('./config.integration.test.json');
+    config = require('./config.integration.test');
 
 describe('Messages Integration', function () {
 
