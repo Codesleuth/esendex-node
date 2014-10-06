@@ -71,7 +71,6 @@ describe('Accounts', function () {
 
     var responseXml;
     var requestStub;
-    var options;
     var expectedPath;
     var callbackSpy;
     var responseObject;

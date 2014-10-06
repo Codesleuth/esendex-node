@@ -1,6 +1,5 @@
 var assert = require('assert'),
     sinon = require('sinon'),
-    isArray = require('util').isArray,
     proxyquire = require('proxyquire').noCallThru();
 
 describe('Messages', function () {
@@ -72,7 +71,6 @@ describe('Messages', function () {
 
     var responseXml;
     var requestStub;
-    var options;
     var callbackSpy;
     var responseObject;
     var parserStub;
