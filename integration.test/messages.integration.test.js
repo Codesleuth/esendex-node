@@ -21,7 +21,7 @@ describe('Messages Integration', function () {
       };
 
       esendex.messages.get(options, function (err, messageheaders) {
-        if (err) done(err);
+        if (err) return done(err);
         messages = messageheaders;
         done();
       });
@@ -58,7 +58,7 @@ describe('Messages Integration', function () {
       };
 
       esendex.messages.send(messages, function (err, res) {
-        if (err) done(err);
+        if (err) return done(err);
         response = res;
         done();
       });

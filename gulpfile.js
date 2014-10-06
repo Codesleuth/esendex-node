@@ -30,9 +30,14 @@ gulp.task('jshint:examples', function () {
     .pipe(jshint.reporter("fail"));
 });
 
-gulp.task('mochaTest', ['jshint:test', 'jshint:integrationtest', 'jshint:code', 'jshint:examples'], function () {
+gulp.task('test', ['jshint:test', 'jshint:integrationtest', 'jshint:code', 'jshint:examples'], function () {
   return gulp.src('test/**/*.test.js', {read: false})
     .pipe(mocha({reporter: 'dot'}));
 });
 
-gulp.task('default', ['jshint:test', 'jshint:code', 'mochaTest']);
+gulp.task('integrationtest', function () {
+  return gulp.src('integration.test/**/*.test.js', {read: false})
+    .pipe(mocha({reporter: 'dot'}));
+});
+
+gulp.task('default', ['jshint:test', 'jshint:code', 'test']);
