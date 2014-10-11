@@ -1,15 +1,31 @@
 var assert = require('assert'),
     util = require('util'),
-    Esendex = require('../'),
-    config = require('./config.integration.test');
+    esendexSandbox = require('esendex-sandbox'),
+    Esendex = require('../');
 
 describe('Accounts Integration', function () {
 
+  var sandbox;
   var esendex;
-  var accountId;
 
-  before(function () {
-    esendex = Esendex(config);
+  before(function (done) {
+    var sandboxPort = process.env.PORT || 3000;
+    var sandboxApp = esendexSandbox.create();
+
+    setTimeout(function () {
+      sandbox = sandboxApp.listen(sandboxPort, function () {
+        esendex = Esendex({
+          host: 'localhost',
+          port: sandboxPort,
+          https: false
+        });
+        done();
+      });
+    }, 500);
+  });
+
+  after(function () {
+    sandbox.close();
   });
 
   describe('get all accounts', function () {
@@ -31,15 +47,6 @@ describe('Accounts Integration', function () {
     it('should return an at least one account', function () {
       assert.ok(accounts.account.length > 0);
     });
-
-    after(function () {
-      accounts.account.some(function (account) {
-        if (account.reference === config.accountreference) {
-          accountId = account.id;
-          return true;
-        }
-      });
-    });
   });
 
   describe('get specific account', function () {
@@ -47,7 +54,7 @@ describe('Accounts Integration', function () {
     var account;
 
     before(function (done) {
-      esendex.accounts.get({ id: accountId }, function (err, response) {
+      esendex.accounts.get({ id: '01234567-89AB-CDEF-0123-456789ABCDEF' }, function (err, response) {
         if (err) return done(err);
         account = response;
         done();
@@ -56,10 +63,6 @@ describe('Accounts Integration', function () {
 
     it('should return a single account', function () {
       assert.ok(!util.isArray(account));
-    });
-
-    it('should return the expected account', function () {
-      assert.equal(account.reference, config.accountreference);
     });
   });
 

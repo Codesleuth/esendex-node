@@ -16,18 +16,18 @@
     "url": "https://github.com/codesleuth/esendex-node/issues"
   },
   "keywords": [
-    "sms", 
-    "business", 
-    "node", 
-    "js", 
-    "sdk", 
-    "rest", 
+    "sms",
+    "business",
+    "node",
+    "js",
+    "sdk",
+    "rest",
     "api"
   ],
   "engines": {
     "node": ">=0.10"
   },
-  "author": "David Wood <david.p.wood@gmail.com>",
+  "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
   "license": {
     "type": "MIT",
     "url": "https://github.com/Codesleuth/esendex-node/raw/master/LICENSE"
@@ -36,8 +36,9 @@
     "xml2js": "0.4.4"
   },
   "devDependencies": {
+    "esendex-sandbox": "git://github.com/Codesleuth/esendex-sandbox.git#0895e8a60f",
     "coveralls": "^2.11.1",
-    "gulp": "^3.8.7",
+    "gulp": "^3.8.8",
     "gulp-jshint": "^1.8.4",
     "gulp-mocha": "^0.5.2",
     "istanbul": "^0.3.0",

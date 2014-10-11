@@ -1,24 +1,39 @@
 var assert = require('assert'),
     util = require('util'),
-    Esendex = require('../'),
-    config = require('./config.integration.test');
+    esendexSandbox = require('esendex-sandbox'),
+    Esendex = require('../');
 
 describe('Messages Integration', function () {
 
+  var sandbox;
   var esendex;
 
-  before(function () {
-    esendex = Esendex(config);
+  before(function (done) {
+    var sandboxPort = process.env.PORT || 3000;
+    var sandboxApp = esendexSandbox.create();
+
+    setTimeout(function () {
+      sandbox = sandboxApp.listen(sandboxPort, function () {
+        esendex = Esendex({
+          host: 'localhost',
+          port: sandboxPort,
+          https: false
+        });
+        done();
+      });
+    }, 500);
   });
 
-  describe('get latest three sent messages', function () {
+  after(function () {
+    sandbox.close();
+  });
+
+  describe('get latest sent messages', function () {
 
     var messages;
 
     before(function (done) {
-      var options = {
-        count: 3
-      };
+      var options = { count: 3 };
 
       esendex.messages.get(options, function (err, messageheaders) {
         if (err) return done(err);
@@ -28,7 +43,7 @@ describe('Messages Integration', function () {
     });
 
     it('should return the count of returned sent messages', function () {
-      assert.equal(messages.count, 3);
+      assert.ok(messages.count);
     });
 
     it('should return the total count of sent messages', function () {
@@ -38,21 +53,17 @@ describe('Messages Integration', function () {
     it('should return an array of messageheader', function () {
       assert.ok(util.isArray(messages.messageheader));
     });
-
-    it('should return three message headers', function () {
-      assert.equal(messages.messageheader.length, 3);
-    });
   });
 
-  describe.skip('send a message', function () {
+  describe('send a message', function () {
 
     var response;
 
     before(function (done) {
       var messages = {
-        accountreference: config.accountreference,
+        accountreference: 'EX0123456',
         message: [{
-          to: config.mobilenumber,
+          to: '447000000000',
           body: "Every message matters!"
         }]
       };

@@ -26,7 +26,7 @@ describe('Accounts', function () {
 
   });
 
-  describe('get', function () {
+  describe('get all', function () {
 
     var responseXml;
     var requestStub;
@@ -45,7 +45,7 @@ describe('Accounts', function () {
       };
       options = { dog: 'cat' };
       callbackSpy = sinon.spy();
-      responseObject = { accounts: 'accounts' };
+      responseObject = { accounts: { account: ['accounts'] } };
       parserStub = sinon.stub().callsArgWith(1, null, responseObject);
 
       var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub().returns(parserStub) });
@@ -63,6 +63,31 @@ describe('Accounts', function () {
 
     it('should call the callback with the parsed accounts response', function () {
       sinon.assert.calledWith(callbackSpy, null, responseObject.accounts);
+    });
+
+  });
+
+  describe('get all with one account returned', function () {
+
+    var callbackSpy;
+
+    before(function () {
+      var esendexFake = {
+        requesthandler: {
+          request: sinon.stub().callsArgWith(5, null, 'not actually xml here')
+        }
+      };
+      callbackSpy = sinon.spy();
+      var responseObject = { accounts: { account: 'not an array' } };
+      var parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+
+      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub().returns(parserStub) });
+      var accounts = Accounts(esendexFake);
+      accounts.get({}, callbackSpy);
+    });
+
+    it('should return an array of a single account', function () {
+      sinon.assert.calledWith(callbackSpy, null, { account: sinon.match.array.and(sinon.match.has("length", 1)) });
     });
 
   });
