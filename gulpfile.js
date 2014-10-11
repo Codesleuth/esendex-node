@@ -8,13 +8,6 @@ gulp.task('jshint:test', function () {
     .pipe(jshint.reporter('default'))
     .pipe(jshint.reporter("fail"));
 });
-
-gulp.task('jshint:integrationtest', function () {
-  return gulp.src(['integration.test/**/*.test.js'])
-    .pipe(jshint('./integration.test/.jshintrc'))
-    .pipe(jshint.reporter('default'))
-    .pipe(jshint.reporter("fail"));
-});
  
 gulp.task('jshint:code', function () {
   return gulp.src(['gulpfile.js', './lib/**/*.js'])
@@ -30,14 +23,11 @@ gulp.task('jshint:examples', function () {
     .pipe(jshint.reporter("fail"));
 });
 
-gulp.task('test', ['jshint:test', 'jshint:integrationtest', 'jshint:code', 'jshint:examples'], function () {
+gulp.task('lint', ['jshint:test', 'jshint:code', 'jshint:examples']);
+
+gulp.task('test', ['lint'], function () {
   return gulp.src('test/**/*.test.js', {read: false})
     .pipe(mocha({reporter: 'dot'}));
 });
 
-gulp.task('integrationtest', function () {
-  return gulp.src('integration.test/**/*.test.js', {read: false})
-    .pipe(mocha({reporter: 'dot'}));
-});
-
-gulp.task('default', ['jshint:test', 'jshint:code', 'test']);
+gulp.task('default', ['test']);

@@ -1,7 +1,7 @@
 var assert = require('assert'),
     util = require('util'),
     esendexSandbox = require('esendex-sandbox'),
-    Esendex = require('../');
+    Esendex = require('../../');
 
 describe('Accounts Integration', function () {
 
