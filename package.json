@@ -36,7 +36,7 @@
     "xml2js": "0.4.4"
   },
   "devDependencies": {
-    "esendex-sandbox": "git://github.com/Codesleuth/esendex-sandbox.git#ece59fc4ca08c1b6d7d2aebc416c3c92007038d8",
+    "esendex-sandbox": "codesleuth/esendex-sandbox",
     "coveralls": "^2.11.1",
     "gulp": "^3.8.8",
     "gulp-jshint": "^1.8.4",
