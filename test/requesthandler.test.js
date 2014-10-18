@@ -128,7 +128,7 @@ describe('Request', function () {
 
       expectedAuth = options.username + ':' + options.password;
 
-      var socketFake = { setTimeout: sinon.stub(), on: sinon.stub() };
+      var socketFake = { setTimeout: sinon.stub(), on: sinon.stub(), listeners: sinon.stub().returns([]) };
 
       requestFake = { on: sinon.stub(), end: sinon.expectation.create().once() };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
@@ -245,7 +245,7 @@ describe('Request', function () {
 
   });
 
-describe('POST without a request body', function () {
+  describe('POST without a request body', function () {
 
     var path;
     var responseBody;
@@ -394,9 +394,18 @@ describe('POST without a request body', function () {
     before(function () {
       timeout = 243;
 
-      socketFake = { setTimeout: sinon.stub().callsArg(1), on: sinon.stub() };
+      socketFake = {
+        setTimeout: sinon.spy(),
+        on: sinon.stub(),
+        listeners: sinon.stub().returns([])
+      };
+      socketFake.on.callsArgOn(1, socketFake);
 
-      requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
+      requestFake = {
+        on: sinon.stub(),
+        end: sinon.stub(),
+        abort: sinon.expectation.create().once()
+      };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
 
       var requestStub = sinon.stub().returns(requestFake);
@@ -414,12 +423,56 @@ describe('POST without a request body', function () {
       sinon.assert.calledWith(socketFake.setTimeout, timeout);
     });
 
+    it('should have set a socket timeout listener', function () {
+      sinon.assert.calledWith(socketFake.on, 'timeout', sinon.match.func);
+    });
+
     it('should have called request.abort on socket timeout', function () {
       requestFake.abort.verify();
     });
 
     it('should have not called the callback', function () {
       callback.verify();
+    });
+
+  });
+
+  describe('with existing socket timeout listener', function () {
+
+    var timeout;
+    var socketFake;
+    var requestFake;
+    var callback;
+
+    before(function () {
+      timeout = 64;
+
+      socketFake = { 
+        setTimeout: sinon.stub(),
+        on: sinon.expectation.create().never(),
+        listeners: sinon.stub().withArgs('timeout').returns([1])
+      };
+
+      requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
+      requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
+
+      var requestStub = sinon.stub().returns(requestFake);
+
+      callback = sinon.expectation.create().never();
+
+      var RequestHandler = proxyquire('../lib/requesthandler', {
+        'https': { request: requestStub }
+      });
+      var request = RequestHandler({ timeout: timeout });
+      request.request('asdkj', '/290348nj', null, null, 215, callback);
+    });
+
+    it('should have set a socket timeout value', function () {
+      sinon.assert.calledWithExactly(socketFake.setTimeout, timeout);
+    });
+
+    it('should not have set a socket timeout listener', function () {
+      socketFake.on.verify();
     });
 
   });
