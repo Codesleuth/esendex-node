@@ -90,7 +90,7 @@ describe('Request', function () {
 
   });
 
-  describe('request with no request body', function () {
+  describe('with no request body', function () {
 
     var options;
     var expectedAuth;
@@ -189,7 +189,7 @@ describe('Request', function () {
 
   });
 
-  describe('POST request with a request body', function () {
+  describe('POST with a request body', function () {
 
     var path;
     var body;
@@ -245,7 +245,7 @@ describe('Request', function () {
 
   });
 
-describe('POST request without a request body', function () {
+describe('POST without a request body', function () {
 
     var path;
     var responseBody;
@@ -299,7 +299,7 @@ describe('POST request without a request body', function () {
 
   });
 
-  describe('PUT request with a request body', function () {
+  describe('PUT with a request body', function () {
 
     var path;
     var body;
@@ -355,7 +355,7 @@ describe('POST request without a request body', function () {
 
   });
 
-  describe('request with a request error', function () {
+  describe('with a request error', function () {
 
     var requestError;
     var requestFake;
@@ -384,7 +384,7 @@ describe('POST request without a request body', function () {
 
   });
 
-  describe('request with socket timeout', function () {
+  describe('with socket timeout', function () {
 
     var timeout;
     var socketFake;
@@ -394,8 +394,7 @@ describe('POST request without a request body', function () {
     before(function () {
       timeout = 243;
 
-      socketFake = { setTimeout: sinon.spy(), on: sinon.stub() };
-      socketFake.on.withArgs('timeout').callsArg(1);
+      socketFake = { setTimeout: sinon.stub().callsArg(1), on: sinon.stub() };
 
       requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
@@ -415,8 +414,7 @@ describe('POST request without a request body', function () {
       sinon.assert.calledWith(socketFake.setTimeout, timeout);
     });
 
-    it('should have set a socket timeout event which calls abort', function () {
-      sinon.assert.calledWith(socketFake.on, 'timeout');
+    it('should have called request.abort on socket timeout', function () {
       requestFake.abort.verify();
     });
 
@@ -426,7 +424,7 @@ describe('POST request without a request body', function () {
 
   });
 
-  describe('request with https disabled', function () {
+  describe('with https disabled', function () {
 
     var requestStub;
 
