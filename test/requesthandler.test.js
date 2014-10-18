@@ -441,8 +441,6 @@ describe('Request', function () {
 
     var timeout;
     var socketFake;
-    var requestFake;
-    var callback;
 
     before(function () {
       timeout = 64;
@@ -453,18 +451,16 @@ describe('Request', function () {
         listeners: sinon.stub().withArgs('timeout').returns([1])
       };
 
-      requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
+      var requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
 
       var requestStub = sinon.stub().returns(requestFake);
-
-      callback = sinon.expectation.create().never();
 
       var RequestHandler = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub }
       });
       var request = RequestHandler({ timeout: timeout });
-      request.request('asdkj', '/290348nj', null, null, 215, callback);
+      request.request('asdkj', '/290348nj', null, null, 215, sinon.spy());
     });
 
     it('should have set a socket timeout value', function () {
