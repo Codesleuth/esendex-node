@@ -1,6 +1,6 @@
 var assert = require('assert'),
     util = require('util'),
-    esendexSandbox = require('esendex-sandbox'),
+    esandex = require('esandex'),
     Esendex = require('../../');
 
 describe('Accounts Integration', function () {
@@ -10,7 +10,7 @@ describe('Accounts Integration', function () {
 
   before(function (done) {
     var sandboxPort = process.env.PORT || 3000;
-    var sandboxApp = esendexSandbox.create();
+    var sandboxApp = esandex.create();
 
     setTimeout(function () {
       sandbox = sandboxApp.listen(sandboxPort, function () {

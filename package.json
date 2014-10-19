@@ -36,8 +36,8 @@
     "xml2js": "0.4.4"
   },
   "devDependencies": {
-    "esendex-sandbox": "codesleuth/esendex-sandbox",
     "coveralls": "^2.11.1",
+    "esandex": "~0.0.3",
     "gulp": "^3.8.8",
     "gulp-jshint": "^1.8.4",
     "gulp-mocha": "^0.5.2",
