@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<account id="D35FA8EB-3C12-4E8E-8DEC-8568B2F35890" uri="http://api.esendex.com/v1.0/accounts/D35FA8EB-3C12-4E8E-8DEC-8568B2F35890" xmlns="http://api.esendex.com/ns/"> 
+  <reference>EX0000000</reference> 
+  <label>EX0000000</label> 
+  <address>447700900654</address> 
+  <type>Professional</type> 
+  <messagesremaining>2000</messagesremaining> 
+  <expireson>2999-02-25T00:00:00</expireson> 
+  <role>PowerUser</role> 
+  <settings uri="http://api.esendex.com/v1.0/accounts/A00F0218-510D-423D-A74E-5A65342FE070/settings" /> 
+</account>

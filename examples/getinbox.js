@@ -1,5 +1,7 @@
 var config = require('./config'),
-    esendex = require('../')(config);
+    Esendex = require('../');
+    
+var esendex = new Esendex(config);
 
 var options = {
   startIndex: 0,

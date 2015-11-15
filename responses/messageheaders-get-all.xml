@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<messageheaders startindex="0" count="15" totalcount="200" xmlns="http://api.esendex.com/ns/"> 
+  <messageheader id="1B9A0D33-4B76-4A9D-919C-1165A9CF1565" uri="http://api.esendex.com/v1.0/messageheaders/1B9A0D33-4B76-4A9D-919C-1165A9CF1565/">
+    <reference>EX0000000</reference> 
+    <status>Delivered</status> 
+    <laststatusat>2012-01-01T12:00:05.000</laststatusat> 
+    <submittedat>2012-01-01T12:00:02.000</submittedat> 
+    <type>SMS</type> 
+    <to> 
+      <phonenumber>447700900123</phonenumber> 
+    </to>
+    <from> 
+     <phonenumber>447700900654</phonenumber> 
+    </from> 
+    <summary>Testing REST API</summary> 
+    <body uri="http://api.esendex.com/v1.0/messageheaders/1B9A0D33-4B76-4A9D-919C-1165A9CF1565/body"/> 
+    <direction>Outbound</direction> 
+    <parts>1</parts> 
+    <username>user@example.com</username> 
+  </messageheader>
+</messageheaders>

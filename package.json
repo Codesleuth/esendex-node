@@ -2,11 +2,11 @@
   "name": "esendex",
   "version": "0.0.5",
   "description": "Esendex Node.js client library.",
-  "main": "./lib/index.js",
+  "main": "dist/lib/index.js",
   "scripts": {
-    "test": "gulp test",
-    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "integrationtest": "gulp integrationtest"
+    "build": "rm -rf dist && cd src && tsc",
+    "test": "cd dist && mocha --require source-map-support/register",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --require source-map-support/register -R spec dist/test/*.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coveralls"
   },
   "repository": {
     "type": "git",
@@ -25,24 +25,24 @@
     "api"
   ],
   "engines": {
-    "node": ">=0.10 <0.11.13"
+    "node": ">=0.10 <5"
   },
   "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
   "license": "MIT",
   "dependencies": {
-    "xml2js": "0.4.4"
+    "xml2js": "^0.4.15"
   },
   "devDependencies": {
-    "coveralls": "^2.11.1",
-    "esandex": "~0.0.3",
-    "gulp": "^3.8.8",
-    "gulp-jshint": "^1.8.4",
-    "gulp-mocha": "^0.5.2",
-    "istanbul": "^0.3.0",
-    "mocha": "^1.21.3",
-    "mocha-lcov-reporter": "0.0.1",
-    "proxyquire": "^1.0.1",
-    "sinon": "^1.10.3",
-    "tsd": "^0.6.5"
+    "body-parser": "^1.14.1",
+    "coveralls": "^2.11.4",
+    "express": "^4.13.3",
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
+    "proxyquire": "^1.7.3",
+    "sinon": "^1.17.2",
+    "source-map-support": "^0.3.3",
+    "tsd": "^0.6.5",
+    "typescript": "^1.6.2"
   }
 }

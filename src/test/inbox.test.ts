@@ -1,30 +1,10 @@
-var assert = require('assert'),
-    sinon = require('sinon'),
-    proxyquire = require('proxyquire').noCallThru();
+import assert = require('assert')
+import sinon = require('sinon')
+import _proxyquire = require('proxyquire')
+import {Inbox} from '../lib/inbox'
+let proxyquire = _proxyquire.noCallThru()
 
 describe('Inbox', function () {
-
-  describe('constructor', function () {
-
-    var esendex;
-    var inbox;
-
-    before(function () {
-      esendex = {};
-      var Inbox = proxyquire('../lib/inbox', { './xmlparser': sinon.stub().returns(sinon.spy()) });
-      inbox = Inbox(esendex);
-    });
-
-    it('should create an instance of the inbox api', function () {
-      assert.notEqual(inbox, null);
-      assert.equal(typeof inbox, 'object');
-    });
-
-    it('should expose the esendex api', function () {
-      assert.equal(inbox.esendex, esendex);
-    });
-
-  });
 
   describe('get', function () {
 
@@ -32,8 +12,9 @@ describe('Inbox', function () {
     var requestStub;
     var options;
     var callbackSpy;
-    var responseObject;
-    var parserStub;
+    var expectedMessageHeaders;
+    var parseStringStub;
+    var xmlParserStub;
 
     before(function () {
       responseXml = 'not actually xml here';
@@ -45,12 +26,22 @@ describe('Inbox', function () {
       };
       options = { banana: 'pineapple' };
       callbackSpy = sinon.spy();
-      responseObject = { messageheaders: 'messageheaders' };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      expectedMessageHeaders = 'messageheaders';
+      let responseObject = { messageheaders: expectedMessageHeaders };
+      
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub().returns(parserStub) });
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.get(options, callbackSpy);
+    });
+
+    it('should create an instance of the XmlParser', function () {
+      sinon.assert.calledOnce(xmlParserStub);
+      sinon.assert.calledWithNew(xmlParserStub);
     });
 
     it('should call the inbox endpoint', function () {
@@ -58,11 +49,11 @@ describe('Inbox', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed inbox response', function () {
-      sinon.assert.calledWith(callbackSpy, null, responseObject.messageheaders);
+      sinon.assert.calledWith(callbackSpy, null, expectedMessageHeaders);
     });
 
   });
@@ -80,9 +71,11 @@ describe('Inbox', function () {
         }
       };
       callbackSpy = sinon.spy();
-
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub() });
-      var inbox = Inbox(esendexFake);
+      
+      var module = proxyquire('../lib/inbox', {
+        './xmlparser': { XmlParser: sinon.stub() }
+      });
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.get(null, callbackSpy);
     });
 
@@ -106,10 +99,13 @@ describe('Inbox', function () {
       };
       callbackSpy = sinon.spy();
 
-      var parserStub = sinon.stub().callsArgWith(1, parserError);
+      let parseStringStub = sinon.stub().callsArgWith(1, parserError)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub().returns(parserStub) });
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.get(null, callbackSpy);
     });
 
@@ -126,7 +122,7 @@ describe('Inbox', function () {
     var options;
     var callbackSpy;
     var responseObject;
-    var parserStub;
+    var parseStringStub;
 
     before(function () {
       responseXml = 'jargon';
@@ -139,10 +135,14 @@ describe('Inbox', function () {
       options = { accountreference: 'EX00PEAR', banana: 'pineapple' };
       callbackSpy = sinon.spy();
       responseObject = { messageheaders: 'messageheaders' };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Inbox = proxyquire('../lib/inbox', {'./xmlparser': sinon.stub().returns(parserStub) });
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.get(options, callbackSpy);
     });
 
@@ -151,7 +151,7 @@ describe('Inbox', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed inbox response', function () {
@@ -180,8 +180,8 @@ describe('Inbox', function () {
       expectedPath = '/v1.0/inbox/messages/' + options.id;
       callbackSpy = sinon.spy();
 
-      var Inbox = proxyquire('../lib/inbox', {});
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {});
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.update(options, callbackSpy);
     });
 
@@ -213,8 +213,8 @@ describe('Inbox', function () {
       expectedPath = '/v1.0/inbox/messages/' + options.id;
       callbackSpy = sinon.spy();
 
-      var Inbox = proxyquire('../lib/inbox', {});
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {});
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.update(options, callbackSpy);
     });
 
@@ -242,8 +242,8 @@ describe('Inbox', function () {
       };
       callbackSpy = sinon.spy();
 
-      var Inbox = proxyquire('../lib/inbox', {});
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {});
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.update({ id: 'sdfsf', read: false }, callbackSpy);
     });
 
@@ -270,8 +270,8 @@ describe('Inbox', function () {
       expectedPath = '/v1.0/inbox/messages/' + id;
       callbackSpy = sinon.spy();
 
-      var Inbox = proxyquire('../lib/inbox', {});
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {});
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.delete(id, callbackSpy);
     });
 
@@ -299,8 +299,8 @@ describe('Inbox', function () {
       };
       callbackSpy = sinon.spy();
 
-      var Inbox = proxyquire('../lib/inbox', {});
-      var inbox = Inbox(esendexFake);
+      var module = proxyquire('../lib/inbox', {});
+      var inbox: Inbox = new module.Inbox(esendexFake);
       inbox.delete('sdfsdsdfds', callbackSpy);
     });
 

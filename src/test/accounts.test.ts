@@ -1,30 +1,10 @@
-var assert = require('assert'),
-    sinon = require('sinon'),
-    proxyquire = require('proxyquire').noCallThru();
+import {Client} from '../lib/client'
+import * as assert from 'assert'
+import sinon = require('sinon')
+import _proxyquire = require('proxyquire')
+let proxyquire = _proxyquire.noCallThru()
 
 describe('Accounts', function () {
-
-  describe('constructor', function () {
-
-    var esendex;
-    var accounts;
-
-    before(function () {
-      esendex = {};
-      var Accounts = proxyquire('../lib/accounts', { './xmlparser': sinon.stub().returns(sinon.spy()) });
-      accounts = Accounts(esendex);
-    });
-
-    it('should create an instance of the accounts api', function () {
-      assert.notEqual(accounts, null);
-      assert.equal(typeof accounts, 'object');
-    });
-
-    it('should expose the esendex api', function () {
-      assert.equal(accounts.esendex, esendex);
-    });
-
-  });
 
   describe('get all', function () {
 
@@ -33,24 +13,29 @@ describe('Accounts', function () {
     var options;
     var callbackSpy;
     var responseObject;
-    var parserStub;
+    var parseStringStub: Sinon.SinonStub;
+    var xmlParserStub: Sinon.SinonStub;
 
     before(function () {
       responseXml = 'not actually xml here';
       requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
-        requesthandler: {
-          request: requestStub
-        }
-      };
+      let client = { requesthandler: { request: requestStub } };
       options = { dog: 'cat' };
       callbackSpy = sinon.spy();
       responseObject = { accounts: { account: ['accounts'] } };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub().returns(parserStub) });
-      var accounts = Accounts(esendexFake);
+      let Accounts = proxyquire('../lib/accounts', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      }).Accounts;
+      let accounts = new Accounts(client);
       accounts.get(options, callbackSpy);
+    });
+
+    it('should create an instance of the XmlParser', function () {
+      sinon.assert.calledWithNew(xmlParserStub);
     });
 
     it('should call the accounts endpoint', function () {
@@ -58,7 +43,7 @@ describe('Accounts', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed accounts response', function () {
@@ -69,25 +54,31 @@ describe('Accounts', function () {
 
   describe('get all with one account returned', function () {
 
+    var expectedAccount;
     var callbackSpy;
 
     before(function () {
-      var esendexFake = {
+      let client = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, null, 'not actually xml here')
         }
       };
       callbackSpy = sinon.spy();
-      var responseObject = { accounts: { account: 'not an array' } };
-      var parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      expectedAccount = 'not an array';
+      let responseObject = { accounts: { account: expectedAccount } };
+      
+      let parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub().returns(parserStub) });
-      var accounts = Accounts(esendexFake);
+      let Accounts = proxyquire('../lib/accounts', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      }).Accounts;
+      let accounts = new Accounts(client);
       accounts.get({}, callbackSpy);
     });
 
     it('should return an array of a single account', function () {
-      sinon.assert.calledWith(callbackSpy, null, { account: sinon.match.array.and(sinon.match.has("length", 1)) });
+      sinon.assert.calledWith(callbackSpy, null, { account: [expectedAccount] });
     });
 
   });
@@ -98,25 +89,30 @@ describe('Accounts', function () {
     var requestStub;
     var expectedPath;
     var callbackSpy;
-    var responseObject;
-    var parserStub;
+    var expectedAccount;
+    var parseStringStub: Sinon.SinonStub;
 
     before(function () {
       responseXml = 'not actually xml here';
       requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
+      let client = {
         requesthandler: {
           request: requestStub
         }
       };
-      var options = { id: '1fecafcf-0c33-481c-bec8-7ca272ba71c3', crab: 'lobster' };
+      let options = { id: '1fecafcf-0c33-481c-bec8-7ca272ba71c3', crab: 'lobster' };
       expectedPath = '/v1.0/accounts/' + options.id;
       callbackSpy = sinon.spy();
-      responseObject = { accounts: 'accounts' };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      expectedAccount = { id: 'value' };
+      let responseObject = { account: expectedAccount };
+      
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Accounts = proxyquire('../lib/accounts', { './xmlparser': sinon.stub().returns(parserStub) });
-      var accounts = Accounts(esendexFake);
+      let Accounts = proxyquire('../lib/accounts', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      }).Accounts;
+      let accounts = new Accounts(client);
       accounts.get(options, callbackSpy);
     });
 
@@ -125,11 +121,11 @@ describe('Accounts', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed account response', function () {
-      sinon.assert.calledWith(callbackSpy, null, responseObject.account);
+      sinon.assert.calledWith(callbackSpy, null, expectedAccount);
     });
 
   });
@@ -141,15 +137,17 @@ describe('Accounts', function () {
 
     before(function () {
       requestError = new Error('some request error');
-      var esendexFake = {
+      let client = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, requestError)
         }
       };
       callbackSpy = sinon.spy();
-
-      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub() });
-      var accounts = Accounts(esendexFake);
+      
+      let Accounts = proxyquire('../lib/accounts', {
+        './xmlparser': { XmlParser: sinon.stub() }
+      }).Accounts;
+      let accounts = new Accounts(client);
       accounts.get(null, callbackSpy);
     });
 
@@ -166,17 +164,20 @@ describe('Accounts', function () {
 
     before(function () {
       parserError = new Error('some parser error');
-      var esendexFake = {
+      let client = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, null, 'some response data')
         }
       };
       callbackSpy = sinon.spy();
 
-      var parserStub = sinon.stub().callsArgWith(1, parserError);
+      let parseStringStub = sinon.stub().callsArgWith(1, parserError)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Accounts = proxyquire('../lib/accounts', {'./xmlparser': sinon.stub().returns(parserStub) });
-      var accounts = Accounts(esendexFake);
+      let Accounts = proxyquire('../lib/accounts', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      }).Accounts;
+      let accounts = new Accounts(client);
       accounts.get(null, callbackSpy);
     });
 

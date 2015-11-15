@@ -1,30 +1,9 @@
-var assert = require('assert'),
-    sinon = require('sinon'),
-    proxyquire = require('proxyquire').noCallThru();
+import * as assert from 'assert'
+import sinon = require('sinon')
+import _proxyquire = require('proxyquire')
+let proxyquire = _proxyquire.noCallThru()
 
 describe('Batches', function () {
-
-  describe('constructor', function () {
-
-    var esendex;
-    var batches;
-
-    before(function () {
-      esendex = {};
-      var Batches = proxyquire('../lib/batches', {});
-      batches = Batches(esendex);
-    });
-
-    it('should create an instance of the batches api', function () {
-      assert.notEqual(batches, null);
-      assert.equal(typeof batches, 'object');
-    });
-
-    it('should expose the esendex api', function () {
-      assert.equal(batches.esendex, esendex);
-    });
-
-  });
 
   describe('get', function () {
 
@@ -33,12 +12,13 @@ describe('Batches', function () {
     var options;
     var callbackSpy;
     var responseObject;
-    var parserStub;
+    var parseStringStub: Sinon.SinonStub;
+    var xmlParserStub: Sinon.SinonStub;
 
     before(function () {
       responseXml = 'could be anything really';
       requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: requestStub
         }
@@ -46,11 +26,19 @@ describe('Batches', function () {
       options = { plane: 'boat' };
       callbackSpy = sinon.spy();
       responseObject = { messagebatches: 'messagebatches' };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Batches = proxyquire('../lib/batches', { './xmlparser': sinon.stub().returns(parserStub) });
-      var batches = Batches(esendexFake);
+      let Batches = proxyquire('../lib/batches', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      }).Batches;
+      let batches = new Batches(esendexFake);
       batches.get(options, callbackSpy);
+    });
+
+    it('should create an instance of the XmlParser', function () {
+      sinon.assert.calledWithNew(xmlParserStub);
     });
 
     it('should call the messagebatches endpoint', function () {
@@ -58,7 +46,7 @@ describe('Batches', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed messagebatches response', function () {
@@ -81,8 +69,10 @@ describe('Batches', function () {
       };
       callbackSpy = sinon.spy();
 
-      var Batches = proxyquire('../lib/batches', { './xmlparser': sinon.stub() });
-      var batches = Batches(esendexFake);
+      let Batches = proxyquire('../lib/batches', {
+        './xmlparser': { XmlParser: sinon.stub() }
+      }).Batches;
+      var batches = new Batches(esendexFake);
       batches.get(null, callbackSpy);
     });
 
@@ -106,10 +96,13 @@ describe('Batches', function () {
       };
       callbackSpy = sinon.spy();
 
-      var parserStub = sinon.stub().callsArgWith(1, parserError);
+      let parseStringStub = sinon.stub().callsArgWith(1, parserError)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Batches = proxyquire('../lib/batches', { './xmlparser': sinon.stub().returns(parserStub) });
-      var batches = Batches(esendexFake);
+      let Batches = proxyquire('../lib/batches', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      }).Batches;
+      var batches = new Batches(esendexFake);
       batches.get(null, callbackSpy);
     });
 
@@ -137,8 +130,8 @@ describe('Batches', function () {
       expectedPath = '/v1.0/messagebatches/' + id;
       callbackSpy = sinon.spy();
 
-      var Batches = proxyquire('../lib/batches', {});
-      var batches = Batches(esendexFake);
+      var Batches = proxyquire('../lib/batches', {}).Batches;
+      var batches = new Batches(esendexFake);
       batches.cancel(id, callbackSpy);
     });
 
@@ -166,8 +159,8 @@ describe('Batches', function () {
       };
       callbackSpy = sinon.spy();
 
-      var Batches = proxyquire('../lib/batches', {});
-      var batches = Batches(esendexFake);
+      var Batches = proxyquire('../lib/batches', {}).Batches;
+      var batches = new Batches(esendexFake);
       batches.cancel('asdasdda', callbackSpy);
     });
 
@@ -184,8 +177,8 @@ describe('Batches', function () {
     var options;
     var expectedPath;
     var callbackSpy;
-    var buildObjectStub;
-    var builderStub;
+    var buildStub;
+    var xmlBuilderStub;
 
     before(function () {
       requestXml = 'batch rename body';
@@ -198,25 +191,29 @@ describe('Batches', function () {
       options = { id: '32c43729-6225-47f7-9359-521406fc29ac', name: 'My new batch name!' };
       expectedPath = '/v1.1/messagebatches/' + options.id;
       callbackSpy = sinon.spy();
-      buildObjectStub = sinon.stub().returns(requestXml);
-      builderStub = sinon.stub().returns(buildObjectStub);
+      
+      buildStub = sinon.stub().returns(requestXml)
+      xmlBuilderStub = sinon.stub().returns({ build: buildStub });
 
-      var Batches = proxyquire('../lib/batches', { './xmlbuilder': builderStub });
-      var batches = Batches(esendexFake);
+      let Batches = proxyquire('../lib/batches', {
+        './xmlparser': { XmlParser: function () {} },
+        './xmlbuilder': { XmlBuilder: xmlBuilderStub }
+      }).Batches;
+      var batches = new Batches(esendexFake);
       batches.rename(options, callbackSpy);
     });
 
     it('should create an xml builder with the messagebatch root element', function () {
-      sinon.assert.calledWith(builderStub, 'messagebatch');
+      sinon.assert.calledOnce(xmlBuilderStub);
+      sinon.assert.calledWithNew(xmlBuilderStub);
+      sinon.assert.calledWith(xmlBuilderStub, 'messagebatch');
     });
 
     it('should build the message batch rename request xml', function () {
-      sinon.assert.calledWith(buildObjectStub, sinon.match({
-        '$': {
-          xmlns: 'http://api.esendex.com/ns/'
-        },
+      sinon.assert.calledWith(buildStub, {
+        '$': { xmlns: 'http://api.esendex.com/ns/' },
         name: options.name
-      }));
+      });
     });
 
     it('should call the messagebatches endpoint', function () {
@@ -243,9 +240,15 @@ describe('Batches', function () {
       };
       callbackSpy = sinon.spy();
       var buildObjectStub = sinon.stub().returns('asdsadasd');
+      
+      let buildStub = sinon.stub().returns('asdsadasd')
+      let xmlBuilderStub = sinon.stub().returns({ build: buildStub });
 
-      var Batches = proxyquire('../lib/batches', { './xmlbuilder': sinon.stub().returns(buildObjectStub) });
-      var batches = Batches(esendexFake);
+      let Batches = proxyquire('../lib/batches', {
+        './xmlparser': { XmlParser: function () {} },
+        './xmlbuilder': { XmlBuilder: xmlBuilderStub }
+      }).Batches;
+      var batches = new Batches(esendexFake);
       batches.rename('asdaaggadsgwq', callbackSpy);
     });
 

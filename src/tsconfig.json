@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "removeComments": true,
+    "rootDir": ".",
+    "sourceRoot": ".",
+    "outDir": "../dist",
+    "sourceMap": true,
+    "declaration": true
+  }
+}

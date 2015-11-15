@@ -1,31 +1,34 @@
-var assert = require('assert'),
-    sinon = require('sinon'),
-    proxyquire = require('proxyquire').noCallThru();
+import assert = require('assert')
+import sinon = require('sinon')
+import _proxyquire = require('proxyquire')
+import {RequestHandler, RequestHandlerOptions} from '../lib/requesthandler'
+import {ResponseHandler} from '../lib/responsehandler'
+let proxyquire = _proxyquire.noCallThru()
 
-describe('Request', function () {
+describe('RequestHandler', function () {
 
   describe('constructor with defaults', function () {
 
-    var request;
+    var request: RequestHandler;
 
     before(function () {
-      var RequestHandler = proxyquire('../lib/requesthandler', {});
-      request = RequestHandler();
+      let Handlers = proxyquire('../lib/requesthandler', {});
+      request = new Handlers.RequestHandler();
     });
 
-    it('should create an instance of the request module', function () {
+    it('should create an instance of the request handler', function () {
       assert.notEqual(request, null);
       assert.equal(typeof request, 'object');
     });
 
     it('should expose the default options', function () {
       var actualOptions = request.options;
-      assert.equal(actualOptions.host, 'api.esendex.com');
-      assert.equal(actualOptions.port, 443);
-      assert.equal(actualOptions.https, true);
-      assert.equal(actualOptions.timeout, 30000);
-      assert.equal(actualOptions.username, undefined);
-      assert.equal(actualOptions.password, undefined);
+      assert.strictEqual(actualOptions.host, 'api.esendex.com');
+      assert.strictEqual(actualOptions.port, 443);
+      assert.strictEqual(actualOptions.https, true);
+      assert.strictEqual(actualOptions.timeout, 30000);
+      assert.strictEqual(actualOptions.username, undefined);
+      assert.strictEqual(actualOptions.password, undefined);
     });
 
   });
@@ -33,7 +36,7 @@ describe('Request', function () {
   describe('constructor with all options specified', function () {
 
     var options;
-    var request;
+    var request: RequestHandler;
 
     before(function () {
       options = {
@@ -44,18 +47,18 @@ describe('Request', function () {
         username: 'asdasdads',
         password: 'sdfsdffs'
       };
-      var RequestHandler = proxyquire('../lib/requesthandler', {});
-      request = RequestHandler(options);
+      let Handlers = proxyquire('../lib/requesthandler', {});
+      request = new Handlers.RequestHandler(options);
     });
 
     it('should expose the specified options', function () {
-      var actualOptions = request.options;
-      assert.equal(actualOptions.host, options.host);
-      assert.equal(actualOptions.port, options.port);
-      assert.equal(actualOptions.https, options.https);
-      assert.equal(actualOptions.timeout, options.timeout);
-      assert.equal(actualOptions.username, options.username);
-      assert.equal(actualOptions.password, options.password);
+      let actualOptions = request.options;
+      assert.strictEqual(actualOptions.host, options.host);
+      assert.strictEqual(actualOptions.port, options.port);
+      assert.strictEqual(actualOptions.https, options.https);
+      assert.strictEqual(actualOptions.timeout, options.timeout);
+      assert.strictEqual(actualOptions.username, options.username);
+      assert.strictEqual(actualOptions.password, options.password);
     });
 
   });
@@ -63,25 +66,25 @@ describe('Request', function () {
   describe('constructor with partial options specified', function () {
 
     var options;
-    var request;
+    var request: RequestHandler;
 
     before(function () {
       options = {
         host: 'sdfsdf',
         password: 'sdfsdffs'
       };
-      var RequestHandler = proxyquire('../lib/requesthandler', {});
-      request = RequestHandler(options);
+      let Handlers = proxyquire('../lib/requesthandler', {});
+      request = new Handlers.RequestHandler(options);
     });
 
     it('should expose the partially specified options', function () {
-      var actualOptions = request.options;
+      let actualOptions = request.options;
       assert.equal(actualOptions.host, options.host);
       assert.equal(actualOptions.password, options.password);
     });
 
     it('should expose the default unspecified actualOptions', function () {
-      var actualOptions = request.options;
+      let actualOptions = request.options;
       assert.equal(actualOptions.port, 443);
       assert.equal(actualOptions.https, true);
       assert.equal(actualOptions.timeout, 30000);
@@ -92,7 +95,7 @@ describe('Request', function () {
 
   describe('with no request body', function () {
 
-    var options;
+    var options: RequestHandlerOptions;
     var expectedAuth;
     var method;
     var path;
@@ -105,7 +108,7 @@ describe('Request', function () {
     var responseBody;
     var requestFake;
     var responseFake;
-    var responseHandlerFake;
+    var responseHandlerStub: Sinon.SinonStub;
     var stringifyStub;
 
     before(function () {
@@ -128,7 +131,7 @@ describe('Request', function () {
 
       expectedAuth = options.username + ':' + options.password;
 
-      var socketFake = { setTimeout: sinon.stub(), on: sinon.stub(), listeners: sinon.stub().returns([]) };
+      let socketFake = { setTimeout: sinon.stub(), on: sinon.stub(), listeners: sinon.stub().returns([]) };
 
       requestFake = { on: sinon.stub(), end: sinon.expectation.create().once() };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
@@ -138,19 +141,20 @@ describe('Request', function () {
       requestStub = sinon.expectation.create().once();
       requestStub.callsArgWith(1, responseFake);
       requestStub.returns(requestFake);
-
-      responseHandlerFake = { handle: sinon.expectation.create().once().callsArgWith(2, null, responseBody) };
+      
+      let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
+      responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
 
       stringifyStub = sinon.stub().returns(querystring);
 
       callback = sinon.expectation.create().once();
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
         'querystring': { stringify: stringifyStub },
-        './responsehandler': responseHandlerFake
+        './responsehandler': { ResponseHandler: responseHandlerStub }
       });
-      var request = RequestHandler(options);
+      let request: RequestHandler = new Handlers.RequestHandler(options);
       request.request(method, path, query, null, expectedStatus, callback);
     });
 
@@ -180,7 +184,8 @@ describe('Request', function () {
     });
 
     it('should call the response handler to handle the response', function () {
-      sinon.assert.calledWith(responseHandlerFake.handle, responseFake, expectedStatus, sinon.match.func);
+      sinon.assert.calledOnce(responseHandlerStub);
+      sinon.assert.calledWithNew(responseHandlerStub);
     });
 
     it('should have called the callback', function () {
@@ -196,7 +201,6 @@ describe('Request', function () {
     var responseBody;
     var requestFake;
     var requestStub;
-    var responseHandlerFake;
     var callback;
 
     before(function () {
@@ -207,15 +211,17 @@ describe('Request', function () {
       requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.expectation.create().once() };
 
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
-      responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
+      
+      let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
+      let responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
 
       callback = sinon.expectation.create().once();
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
-        './responsehandler': responseHandlerFake
+        './responsehandler': { ResponseHandler: responseHandlerStub }
       });
-      var request = RequestHandler(null);
+      let request: RequestHandler = new Handlers.RequestHandler(null);
       request.request('POST', path, null, body, 798, callback);
     });
 
@@ -251,7 +257,6 @@ describe('Request', function () {
     var responseBody;
     var requestFake;
     var requestStub;
-    var responseHandlerFake;
     var callback;
 
     before(function () {
@@ -261,15 +266,17 @@ describe('Request', function () {
       requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.expectation.create().once() };
 
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
-      responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
+      
+      let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
+      let responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
 
       callback = sinon.expectation.create().once();
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
-        './responsehandler': responseHandlerFake
+        './responsehandler': { ResponseHandler: responseHandlerStub }
       });
-      var request = RequestHandler(null);
+      let request:RequestHandler = new Handlers.RequestHandler(null);
       request.request('POST', path, null, null, 798, callback);
     });
 
@@ -306,7 +313,6 @@ describe('Request', function () {
     var responseBody;
     var requestFake;
     var requestStub;
-    var responseHandlerFake;
     var callback;
 
     before(function () {
@@ -317,15 +323,17 @@ describe('Request', function () {
       requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.expectation.create().once() };
 
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
-      responseHandlerFake = { handle: sinon.stub().callsArgWith(2, null, responseBody) };
+      
+      let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
+      let responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
 
       callback = sinon.expectation.create().once();
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
-        './responsehandler': responseHandlerFake
+        './responsehandler': { ResponseHandler: responseHandlerStub }
       });
-      var request = RequestHandler(null);
+      let request: RequestHandler = new Handlers.RequestHandler(null);
       request.request('PUT', path, null, body, 3132, callback);
     });
 
@@ -367,14 +375,14 @@ describe('Request', function () {
       requestFake = { on: sinon.stub(), end: sinon.stub() };
       requestFake.on.withArgs('error').callsArgWith(1, requestError);
 
-      var requestStub = sinon.stub().returns(requestFake);
+      let requestStub = sinon.stub().returns(requestFake);
 
       callback = sinon.expectation.create().once();
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub }
       });
-      var request = RequestHandler(null);
+      let request: RequestHandler = new Handlers.RequestHandler(null);
       request.request('PLOP', '/path', null, null, 3132, callback);
     });
 
@@ -408,14 +416,14 @@ describe('Request', function () {
       };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
 
-      var requestStub = sinon.stub().returns(requestFake);
+      let requestStub = sinon.stub().returns(requestFake);
 
       callback = sinon.expectation.create().never();
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub }
       });
-      var request = RequestHandler({ timeout: timeout });
+      let request: RequestHandler = new Handlers.RequestHandler({ timeout: timeout });
       request.request('asdkj', '/290348nj', null, null, 215, callback);
     });
 
@@ -451,15 +459,15 @@ describe('Request', function () {
         listeners: sinon.stub().withArgs('timeout').returns([1])
       };
 
-      var requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
+      let requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
 
-      var requestStub = sinon.stub().returns(requestFake);
+      let requestStub = sinon.stub().returns(requestFake);
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub }
       });
-      var request = RequestHandler({ timeout: timeout });
+      let request: RequestHandler = new Handlers.RequestHandler({ timeout: timeout });
       request.request('asdkj', '/290348nj', null, null, 215, sinon.spy());
     });
 
@@ -478,15 +486,15 @@ describe('Request', function () {
     var requestStub;
 
     before(function () {
-      var requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.stub() };
+      let requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.stub() };
 
       requestStub = sinon.expectation.create().once().returns(requestFake);
 
-      var RequestHandler = proxyquire('../lib/requesthandler', {
+      let Handlers = proxyquire('../lib/requesthandler', {
         'http': { request: requestStub }
       });
-      var request = RequestHandler({ https: false });
-      request.request('PUT', '/290348nj', {}, 215, sinon.spy());
+      let request: RequestHandler = new Handlers.RequestHandler({ https: false });
+      request.request('PUT', '/290348nj', {}, null, 215, sinon.spy());
     });
 
     it('should have called request on the http module', function () {

@@ -41,8 +41,8 @@ Pull requests are welcome, but there are some rules:
 [travis-image]: https://travis-ci.org/Codesleuth/esendex-node.svg?branch=master
 [travis-url]: https://travis-ci.org/Codesleuth/esendex-node
 
-[coveralls-image]: https://coveralls.io/repos/Codesleuth/esendex-node/badge.png
-[coveralls-url]: https://coveralls.io/r/Codesleuth/esendex-node
+[coveralls-image]: https://coveralls.io/repos/Codesleuth/esendex-node/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/Codesleuth/esendex-node?branch=master
 
 [codeship-image]: https://www.codeship.io/projects/51dfa190-ff1b-0131-5487-5eefab01992e/status
 [codeship-url]: https://www.codeship.io/projects/29670

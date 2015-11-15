@@ -1,30 +1,10 @@
-var assert = require('assert'),
-    sinon = require('sinon'),
-    proxyquire = require('proxyquire').noCallThru();
+import assert = require('assert')
+import sinon = require('sinon')
+import _proxyquire = require('proxyquire')
+import {Messages} from '../lib/messages'
+let proxyquire = _proxyquire.noCallThru()
 
 describe('Messages', function () {
-
-  describe('constructor', function () {
-
-    var esendex;
-    var messages;
-
-    before(function () {
-      esendex = {};
-      var Messages = proxyquire('../lib/messages', {});
-      messages = Messages(esendex);
-    });
-
-    it('should create an instance of the messages api', function () {
-      assert.notEqual(messages, null);
-      assert.equal(typeof messages, 'object');
-    });
-
-    it('should expose the esendex api', function () {
-      assert.equal(messages.esendex, esendex);
-    });
-
-  });
 
   describe('get all', function () {
 
@@ -33,12 +13,13 @@ describe('Messages', function () {
     var options;
     var callbackSpy;
     var responseObject;
-    var parserStub;
+    var parseStringStub;
+    var xmlParserStub;
 
     before(function () {
       responseXml = 'could be anything really';
       requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: requestStub
         }
@@ -46,11 +27,20 @@ describe('Messages', function () {
       options = { dog: 'cat' };
       callbackSpy = sinon.spy();
       responseObject = { messageheaders: { messageheader: ['messageheaders'] } };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
-      var messages = Messages(esendexFake);
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      let messages: Messages = new module.Messages(esendexFake);
       messages.get(options, callbackSpy);
+    });
+
+    it('should create an instance of the XmlParser', function () {
+      sinon.assert.calledOnce(xmlParserStub);
+      sinon.assert.calledWithNew(xmlParserStub);
     });
 
     it('should call the messageheaders endpoint', function () {
@@ -58,7 +48,7 @@ describe('Messages', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed messageheaders response', function () {
@@ -69,61 +59,65 @@ describe('Messages', function () {
 
   describe('get all with one message returned', function () {
 
-    var responseXml;
-    var requestStub;
+    var expectedMessageHeader;
     var callbackSpy;
-    var responseObject;
-    var parserStub;
 
     before(function () {
-      responseXml = 'jargon';
-      requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
+      let responseXml = 'jargon';
+      let requestStub = sinon.stub().callsArgWith(5, null, responseXml);
+      let esendexFake = {
         requesthandler: {
           request: requestStub
         }
       };
       callbackSpy = sinon.spy();
-      responseObject = { messageheaders: { messageheader: 'not an array' } };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      expectedMessageHeader = 'not an array';
+      let responseObject = { messageheaders: { messageheader: expectedMessageHeader } };
+      
+      let parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
-      var messages = Messages(esendexFake);
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      let messages: Messages = new module.Messages(esendexFake);
       messages.get({}, callbackSpy);
     });
 
     it('should return an array of a single message header', function () {
-      sinon.assert.calledWith(callbackSpy, null, { messageheader: sinon.match.array.and(sinon.match.has("length", 1)) });
+      sinon.assert.calledWith(callbackSpy, null, { messageheader: [expectedMessageHeader] });
     });
 
   });
 
   describe('get specific message', function () {
 
-    var responseXml;
     var requestStub;
-    var options;
     var expectedPath;
     var callbackSpy;
-    var responseObject;
-    var parserStub;
+    var expectedMessageHeader;
 
     before(function () {
-      responseXml = 'could be anything really';
+      let responseXml = 'could be anything really';
       requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: requestStub
         }
       };
-      options = { id: '6aa73324-1ac6-4f6f-b5df-9dec5bdd5d64', piano: 'violin' };
+      let options = { id: '6aa73324-1ac6-4f6f-b5df-9dec5bdd5d64', piano: 'violin' };
       expectedPath = '/v1.0/messageheaders/' + options.id;
       callbackSpy = sinon.spy();
-      responseObject = { messageheader: 'messageheader' };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      expectedMessageHeader = 'messageheader';
+      let responseObject = { messageheader: expectedMessageHeader };
+      
+      let parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
-      var messages = Messages(esendexFake);
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      let messages: Messages = new module.Messages(esendexFake);
       messages.get(options, callbackSpy);
     });
 
@@ -131,12 +125,8 @@ describe('Messages', function () {
       sinon.assert.calledWith(requestStub, 'GET', expectedPath, sinon.match({ id: undefined }), null, 200, sinon.match.func);
     });
 
-    it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
-    });
-
     it('should call the callback with the parsed messageheader response', function () {
-      sinon.assert.calledWith(callbackSpy, null, responseObject.messageheader);
+      sinon.assert.calledWith(callbackSpy, null, expectedMessageHeader);
     });
 
   });
@@ -148,15 +138,17 @@ describe('Messages', function () {
 
     before(function () {
       requestError = new Error('some request error');
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, requestError)
         }
       };
       callbackSpy = sinon.spy();
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub() });
-      var messages = Messages(esendexFake);
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: sinon.stub() }
+      });
+      let messages: Messages = new module.Messages(esendexFake);
       messages.get(null, callbackSpy);
     });
 
@@ -173,17 +165,20 @@ describe('Messages', function () {
 
     before(function () {
       parserError = new Error('some parser error');
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, null, 'some response data')
         }
       };
       callbackSpy = sinon.spy();
 
-      var parserStub = sinon.stub().callsArgWith(1, parserError);
+      let parseStringStub = sinon.stub().callsArgWith(1, parserError)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
-      var messages = Messages(esendexFake);
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      let messages = new module.Messages(esendexFake);
       messages.get(null, callbackSpy);
     });
 
@@ -199,39 +194,45 @@ describe('Messages', function () {
     var responseXml;
     var requestStub;
     var callbackSpy;
-    var responseObject;
-    var buildObjectStub;
-    var parserStub;
-    var builderStub;
+    var expectedMessageHeader;
     var messagesToSend;
+    var parseStringStub;
+    var xmlParserStub;
+    var xmlBuilderStub;
 
     before(function () {
       requestXml = 'could be anything really';
       responseXml = 'some message headers response';
       requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: requestStub
         }
       };
       callbackSpy = sinon.spy();
-      responseObject = { messageheaders: { messageheader: 'a single message header' } };
-      buildObjectStub = sinon.stub().returns(requestXml);
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
-      builderStub = sinon.stub().returns(buildObjectStub);
+      expectedMessageHeader = 'a single message header';
+      let responseObject = { messageheaders: { messageheader: expectedMessageHeader } };
+
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
+
+      let buildStub = sinon.stub().returns(requestXml);
+      xmlBuilderStub = sinon.stub().returns({ build: buildStub });
 
       messagesToSend = { some: 'messages' };
 
-      var Messages = proxyquire('../lib/messages', { 
-        './xmlparser': sinon.stub().returns(parserStub),
-        './xmlbuilder': builderStub
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub },
+        './xmlbuilder': { XmlBuilder: xmlBuilderStub }
       });
-      var messages = Messages(esendexFake);
+      let messages = new module.Messages(esendexFake);
       messages.send(messagesToSend, callbackSpy);
     });
 
     it('should create an xml builder with the messages root element', function () {
-      sinon.assert.calledWith(builderStub, 'messages');
+      sinon.assert.calledOnce(xmlBuilderStub);
+      sinon.assert.calledWithNew(xmlBuilderStub);
+      sinon.assert.calledWith(xmlBuilderStub, 'messages');
     });
 
     it('should call the messagedispatcher endpoint', function () {
@@ -239,44 +240,48 @@ describe('Messages', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed messagedispatcher response', function () {
-      sinon.assert.calledWith(callbackSpy, null, responseObject.messageheaders);
-    });
-
-    it('should return an array of a single sent message header', function () {
-      sinon.assert.calledWith(callbackSpy, null, { messageheader: sinon.match.array.and(sinon.match.has("length", 1)) });
+      sinon.assert.calledWith(callbackSpy, null, { messageheader: [expectedMessageHeader] });
     });
 
   });
 
   describe('send returns multiple messages', function () {
 
+    var firstMessageHeader;
+    var secondMessageHeader;
     var callbackSpy;
 
     before(function () {
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, null, 'some message headers response')
         }
       };
       callbackSpy = sinon.spy();
-      var responseObject = { messageheaders: { messageheader: ['an array of message header'] } };
-      var buildObjectStub = sinon.stub().returns('could be anything really');
-      var parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      firstMessageHeader = 'firstMessageHeader';
+      secondMessageHeader = 'secondMessageHeader';
+      let responseObject = { messageheaders: { messageheader: [firstMessageHeader, secondMessageHeader] } };
 
-      var Messages = proxyquire('../lib/messages', { 
-        './xmlparser': sinon.stub().returns(parserStub),
-        './xmlbuilder': sinon.stub().returns(buildObjectStub)
+      let parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
+
+      let buildStub = sinon.stub().returns('could be anything really');
+      let xmlBuilderStub = sinon.stub().returns({ build: buildStub });
+
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub },
+        './xmlbuilder': { XmlBuilder: xmlBuilderStub }
       });
-      var messages = Messages(esendexFake);
+      let messages = new module.Messages(esendexFake);
       messages.send({}, callbackSpy);
     });
 
-    it('should return an array of a single sent message header', function () {
-      sinon.assert.calledWith(callbackSpy, null, { messageheader: sinon.match.array.and(sinon.match.has("length", 1)) });
+    it('should return all dispatched message header responses', function () {
+      sinon.assert.calledWith(callbackSpy, null, { messageheader: [firstMessageHeader, secondMessageHeader] });
     });
 
   });
@@ -288,20 +293,21 @@ describe('Messages', function () {
 
     before(function () {
       requestError = new Error('some request error');
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, requestError)
         }
       };
       callbackSpy = sinon.spy();
 
-      var builderStub = sinon.stub().returns(sinon.stub().returns('akjshdjsahd'));
+      let buildStub = sinon.stub().returns('akjshdjsahd');
+      let xmlBuilderStub = sinon.stub().returns({ build: buildStub });
 
-      var Messages = proxyquire('../lib/messages', { 
-        './xmlparser': sinon.stub(),
-        './xmlbuilder': builderStub
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: sinon.stub() },
+        './xmlbuilder': { XmlBuilder: xmlBuilderStub }
       });
-      var messages = Messages(esendexFake);
+      let messages = new module.Messages(esendexFake);
       messages.send('asdsadd', callbackSpy);
     });
 
@@ -318,21 +324,24 @@ describe('Messages', function () {
 
     before(function () {
       parserError = new Error('some parser error');
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, null, 'some response data')
         }
       };
       callbackSpy = sinon.spy();
 
-      var parserStub = sinon.stub().callsArgWith(1, parserError);
-      var builderStub = sinon.stub().returns(sinon.stub().returns('akjshdjsahd'));
+      let parseStringStub = sinon.stub().callsArgWith(1, parserError)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Messages = proxyquire('../lib/messages', { 
-        './xmlparser': sinon.stub().returns(parserStub),
-        './xmlbuilder': builderStub
+      let buildStub = sinon.stub().returns('akjshdjsahd');
+      let xmlBuilderStub = sinon.stub().returns({ build: buildStub });
+
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub },
+        './xmlbuilder': { XmlBuilder: xmlBuilderStub }
       });
-      var messages = Messages(esendexFake);
+      let messages = new module.Messages(esendexFake);
       messages.send('dgdfg', callbackSpy);
     });
 
@@ -348,26 +357,37 @@ describe('Messages', function () {
     var requestStub;
     var expectedPath;
     var callbackSpy;
-    var responseObject;
-    var parserStub;
+    var expectedMessageBody;
+    var parseStringStub;
+    var xmlParserStub;
 
     before(function () {
       responseXml = 'could be anything really';
       requestStub = sinon.stub().callsArgWith(5, null, responseXml);
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: requestStub
         }
       };
-      var messageId = 'e0ad7982-2670-4a91-9ab9-12687eaacb96';
+      let messageId = 'e0ad7982-2670-4a91-9ab9-12687eaacb96';
       expectedPath = '/v1.0/messageheaders/' + messageId + '/body';
       callbackSpy = sinon.spy();
-      responseObject = { messagebody: 'messagebody' };
-      parserStub = sinon.stub().callsArgWith(1, null, responseObject);
+      expectedMessageBody = 'messagebody';
+      let responseObject = { messagebody: expectedMessageBody };
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
-      var messages = Messages(esendexFake);
+      parseStringStub = sinon.stub().callsArgWith(1, null, responseObject)
+      xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
+
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      let messages = new module.Messages(esendexFake);
       messages.getBody(messageId, callbackSpy);
+    });
+
+    it('should create an xml parser', function () {
+      sinon.assert.calledOnce(xmlParserStub);
+      sinon.assert.calledWithNew(xmlParserStub);
     });
 
     it('should call the messageheader body endpoint', function () {
@@ -375,11 +395,11 @@ describe('Messages', function () {
     });
 
     it('should parse the xml response', function () {
-      sinon.assert.calledWith(parserStub, responseXml, sinon.match.func);
+      sinon.assert.calledWith(parseStringStub, responseXml, sinon.match.func);
     });
 
     it('should call the callback with the parsed messagebody response', function () {
-      sinon.assert.calledWith(callbackSpy, null, responseObject.messagebody);
+      sinon.assert.calledWith(callbackSpy, null, expectedMessageBody);
     });
 
   });
@@ -391,15 +411,17 @@ describe('Messages', function () {
 
     before(function () {
       requestError = new Error('some request error');
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, requestError)
         }
       };
       callbackSpy = sinon.spy();
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub() });
-      var messages = Messages(esendexFake);
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: sinon.stub() }
+      });
+      let messages = new module.Messages(esendexFake);
       messages.getBody('adasdasd', callbackSpy);
     });
 
@@ -416,17 +438,20 @@ describe('Messages', function () {
 
     before(function () {
       parserError = new Error('some parser error');
-      var esendexFake = {
+      let esendexFake = {
         requesthandler: {
           request: sinon.stub().callsArgWith(5, null, 'some response data')
         }
       };
       callbackSpy = sinon.spy();
 
-      var parserStub = sinon.stub().callsArgWith(1, parserError);
+      let parseStringStub = sinon.stub().callsArgWith(1, parserError)
+      let xmlParserStub = sinon.stub().returns({ parseString: parseStringStub });
 
-      var Messages = proxyquire('../lib/messages', { './xmlparser': sinon.stub().returns(parserStub) });
-      var messages = Messages(esendexFake);
+      let module = proxyquire('../lib/messages', {
+        './xmlparser': { XmlParser: xmlParserStub }
+      });
+      let messages = new module.Messages(esendexFake);
       messages.getBody(null, callbackSpy);
     });
 

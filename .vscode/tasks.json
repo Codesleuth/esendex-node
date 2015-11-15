@@ -1,0 +1,50 @@
+{
+  "version": "0.1.0",
+  "command": "npm",
+  "isShellCommand": true,
+  "showOutput": "silent",
+  "tasks": [
+    {
+      "taskName": "build",
+      "args": [
+        "run"
+      ],
+      "isBuildCommand": true,
+      "problemMatcher": {
+        "base": "$tsc",
+        "fileLocation": [
+          "relative",
+          "${workspaceRoot}/src"
+        ]
+      }
+    },
+    {
+      "taskName": "test",
+      "args": [
+        "run"
+      ],
+      "isTestCommand": true,
+      "problemMatcher": {
+        "owner": "mocha",
+        "fileLocation": [
+          "absolute"
+        ],
+        "pattern": [
+          {
+            "regexp": "^\\s*\\d+\\)\\s+(.+):$",
+            "message": 1
+          },
+          {
+            "regexp": "^\\s+.*$"
+          },
+          {
+            "regexp": "\\s+at\\s(.*)\\s\\((.*?:.*?):(\\d+):(\\d+)\\)",
+            "file": 2,
+            "line": 3,
+            "column": 4
+          }
+        ]
+      }
+    }
+  ]
+}

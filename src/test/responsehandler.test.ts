@@ -1,5 +1,5 @@
-var sinon = require('sinon');
-var ResponseHandler = require('../lib/responsehandler');
+import sinon = require('sinon');
+import {ResponseHandler} from '../lib/responsehandler'
 
 describe('Response Handler', function () {
 
@@ -21,7 +21,8 @@ describe('Response Handler', function () {
       responseFake.on.withArgs('end').callsArg(1);
 
       callbackSpy = sinon.spy();
-      ResponseHandler.handle(responseFake, expectedStatus, callbackSpy);
+      let handler = new ResponseHandler();
+      handler.handle(responseFake, expectedStatus, callbackSpy);
     });
 
     it('should attach a data event to the response', function () {
@@ -53,7 +54,8 @@ describe('Response Handler', function () {
       responseFake.on.withArgs('end').callsArg(1);
 
       callbackSpy = sinon.spy();
-      ResponseHandler.handle(responseFake, expectedStatus, callbackSpy);
+      let handler = new ResponseHandler();
+      handler.handle(responseFake, expectedStatus, callbackSpy);
     });
 
     it('should call the callback with an error', function () {

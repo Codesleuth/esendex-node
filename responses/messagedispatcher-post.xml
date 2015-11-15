@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<messageheaders batchid="F8BF9867-FF81-49E4-ACC5-774DE793B776" 
+                xmlns="http://api.esendex.com/ns/"> 
+  <messageheader uri="https://api.esendex.com/v1.0/messageheaders/1183C73D-2E62-4F60-B610-30F160BDFBD5" id="1183C73D-2E62-4F60-B610-30F160BDFBD5" /> 
+</messageheaders>
