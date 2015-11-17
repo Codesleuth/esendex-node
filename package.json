@@ -25,7 +25,7 @@
     "api"
   ],
   "engines": {
-    "node": ">=0.10 <5"
+    "node": ">=0.10 <=5"
   },
   "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
   "license": "MIT",

@@ -32,8 +32,8 @@ There's a number of example scripts that show the client library in action. Take
 Pull requests are welcome, but there are some rules:
 
 * Please adhere to the coding style implied from existing code
-* Run `gulp` to ensure your code is lint free and all tests pass before you push
-* Please ensure 100% unit test coverage for any changes (examples folder exempt for now)
+* Run `npm test` to ensure your code is lint free and all tests pass before you push
+* Please cover all changes with sufficient tests (examples folder exempt for now)
 
 [npm-image]: http://img.shields.io/npm/v/esendex.svg
 [npm-url]: https://npmjs.org/package/esendex
