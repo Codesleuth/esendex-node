@@ -30,7 +30,19 @@
       "commit": "c560ba6f0f55ce6f50e9d06e37b5bc0e2b9117b0"
     },
     "node/node.d.ts": {
-      "commit": "c560ba6f0f55ce6f50e9d06e37b5bc0e2b9117b0"
+      "commit": "fc341765ebbb04b7109981a25dced01f488f4d94"
+    },
+    "orchestrator/orchestrator.d.ts": {
+      "commit": "fc341765ebbb04b7109981a25dced01f488f4d94"
+    },
+    "q/Q.d.ts": {
+      "commit": "fc341765ebbb04b7109981a25dced01f488f4d94"
+    },
+    "gulp/gulp.d.ts": {
+      "commit": "fc341765ebbb04b7109981a25dced01f488f4d94"
+    },
+    "gulp-typescript/gulp-typescript.d.ts": {
+      "commit": "fc341765ebbb04b7109981a25dced01f488f4d94"
     }
   }
 }

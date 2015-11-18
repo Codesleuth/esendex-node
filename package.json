@@ -2,10 +2,11 @@
   "name": "esendex",
   "version": "0.1.1",
   "description": "Esendex Node.js client library.",
-  "main": "dist/lib/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "build": "rm -rf dist && cd src && tsc",
-    "test": "cd dist && mocha --require source-map-support/register",
+    "build": "gulp build",
+    "test": "gulp test",
+    "tsd": "tsd install",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --require source-map-support/register -R spec dist/test/*.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coveralls"
   },
   "repository": {
@@ -30,16 +31,22 @@
   "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
   "license": "MIT",
   "dependencies": {
+    "gulp-sourcemaps": "^1.6.0",
     "xml2js": "^0.4.15"
   },
   "devDependencies": {
     "body-parser": "^1.14.1",
     "coveralls": "^2.11.4",
     "express": "^4.13.3",
+    "gulp": "^3.9.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-typescript": "^2.9.2",
     "istanbul": "^0.4.0",
+    "merge2": "^0.3.6",
     "mocha": "^2.3.4",
     "mocha-lcov-reporter": "^1.0.0",
     "proxyquire": "^1.7.3",
+    "rimraf": "^2.4.3",
     "sinon": "^1.17.2",
     "source-map-support": "^0.3.3",
     "tsd": "^0.6.5",

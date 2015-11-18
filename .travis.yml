@@ -5,7 +5,7 @@ node_js:
   - 'node'
   - 'iojs'
 before_script:
-  - ./node_modules/.bin/tsd install
+  - npm run tsd
 script:
   - npm run build
   - npm test
