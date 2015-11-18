@@ -11,7 +11,7 @@ var paths = {
   test: 'build/test',
   definitions: 'build/definitions',
   tsconfig: 'src/tsconfig.json',
-  sourceRoot: __dirname + '/src'
+  sourceRoot: '../../src'
 }
 
 var tsconfig = {
@@ -21,7 +21,7 @@ var tsconfig = {
 }
 
 gulp.task('clean', function (cb) {
-  rimraf(paths.root, cb);
+  rimraf(paths.root, cb)
 })
 
 gulp.task('build', ['clean'], function () {
@@ -40,6 +40,5 @@ gulp.task('build', ['clean'], function () {
 
 gulp.task('test', function () {
   return gulp.src(paths.test + '/**/*.js', { read: false })
-    // gulp-mocha needs filepaths so you can't have any plugins before it 
-    .pipe(mocha({ reporter: 'spec', require: ['source-map-support/register'] }));
+    .pipe(mocha({ reporter: 'spec', require: ['source-map-support/register'] }))
 })
