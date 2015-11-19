@@ -2,8 +2,8 @@ language: node_js
 node_js:
   - '4.1'
   - '0.10.32'
-  - 'node'
-  - 'iojs'
+  - node
+  - iojs
 before_script:
   - npm run tsd
 script:

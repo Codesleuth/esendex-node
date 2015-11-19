@@ -33,12 +33,23 @@ gulp.task('build', ['clean'], function () {
   
   return merge([
     tsResult.dts.pipe(gulp.dest(paths.definitions)),
-    tsResult.js.pipe(sourcemaps.write('.', { sourceRoot: paths.sourceRoot })).pipe(gulp.dest(paths.root)),
-    gulp.src('package.json').pipe(gulp.dest(paths.root))
+    tsResult.js.pipe(sourcemaps.write('.', { sourceRoot: paths.sourceRoot })).pipe(gulp.dest(paths.root))
   ])
 })
 
 gulp.task('test', function () {
   return gulp.src(paths.test + '/**/*.js', { read: false })
     .pipe(mocha({ reporter: 'spec', require: ['source-map-support/register'] }))
+})
+
+gulp.task('clean-release', function (cb) {
+  rimraf('release', cb)
+})
+
+gulp.task('release', ['clean-release'], function () {
+  return merge([
+    gulp.src(['build/lib/**/*']).pipe(gulp.dest('release/lib')),
+    gulp.src(['build/definitions/lib/**/*']).pipe(gulp.dest('release/definitions')),
+    gulp.src(['package.json', 'LICENSE', 'README.md']).pipe(gulp.dest('release'))
+  ])
 })
