@@ -2,6 +2,7 @@ import * as http from 'http'
 import * as https from 'https'
 import * as querystring from 'querystring'
 import {ResponseHandler} from './responsehandler'
+import {UserAgentBuilder} from './useragentbuilder'
 
 export declare interface RequestHandlerOptions {
   host?: string
@@ -26,6 +27,7 @@ function onSocketTimeout() {
 export class RequestHandler {
   public options: RequestHandlerOptions;
   private responseHandler: ResponseHandler;
+  private userAgent: string;
   
   constructor(options: RequestHandlerOptions) {
     this.options = {
@@ -37,13 +39,14 @@ export class RequestHandler {
       password: options && options.password !== undefined  ? options.password : defaultOptions.password
     };
     this.responseHandler = new ResponseHandler();
+    this.userAgent = UserAgentBuilder.Build();
   }
 
   request(method: string, path: string, query: Object, data: string, expectedStatus: number, callback: (err: any, responseData?: string) => void) {
     let isPost = /(POST|PUT)/.test(method);
     let headers = {
       'Accept': 'application/xml',
-      'User-Agent': 'github.com/codesleuth/esendex-node'
+      'User-Agent': this.userAgent
     };
     let options = {
       host: this.options.host,

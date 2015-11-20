@@ -109,6 +109,7 @@ describe('RequestHandler', function () {
     var requestFake;
     var responseFake;
     var responseHandlerStub: Sinon.SinonStub;
+    var expectedUserAgent;
     var stringifyStub;
 
     before(function () {
@@ -144,6 +145,8 @@ describe('RequestHandler', function () {
       
       let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
       responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns(expectedUserAgent) }
 
       stringifyStub = sinon.stub().returns(querystring);
 
@@ -152,7 +155,8 @@ describe('RequestHandler', function () {
       let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
         'querystring': { stringify: stringifyStub },
-        './responsehandler': { ResponseHandler: responseHandlerStub }
+        './responsehandler': { ResponseHandler: responseHandlerStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request: RequestHandler = new Handlers.RequestHandler(options);
       request.request(method, path, query, null, expectedStatus, callback);
@@ -175,7 +179,7 @@ describe('RequestHandler', function () {
     it('should call http.request with the expected headers', function () {
       sinon.assert.calledWith(requestStub, sinon.match({ headers: {
         'Accept': 'application/xml',
-        'User-Agent': 'github.com/codesleuth/esendex-node'
+        'User-Agent': expectedUserAgent
       }}));
     });
 
@@ -214,12 +218,15 @@ describe('RequestHandler', function () {
       
       let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
       let responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns('asdhjahsdj') }
 
       callback = sinon.expectation.create().once();
 
       let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
-        './responsehandler': { ResponseHandler: responseHandlerStub }
+        './responsehandler': { ResponseHandler: responseHandlerStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request: RequestHandler = new Handlers.RequestHandler(null);
       request.request('POST', path, null, body, 798, callback);
@@ -269,12 +276,15 @@ describe('RequestHandler', function () {
       
       let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
       let responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns('asdhjahsdj') }
 
       callback = sinon.expectation.create().once();
 
       let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
-        './responsehandler': { ResponseHandler: responseHandlerStub }
+        './responsehandler': { ResponseHandler: responseHandlerStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request:RequestHandler = new Handlers.RequestHandler(null);
       request.request('POST', path, null, null, 798, callback);
@@ -326,12 +336,15 @@ describe('RequestHandler', function () {
       
       let responseHandlerHandle = sinon.stub().callsArgWith(2, null, responseBody);
       let responseHandlerStub = sinon.stub().returns({ handle: responseHandlerHandle })
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns('asdhjahsdj') }
 
       callback = sinon.expectation.create().once();
 
       let Handlers = proxyquire('../lib/requesthandler', {
         'https': { request: requestStub },
-        './responsehandler': { ResponseHandler: responseHandlerStub }
+        './responsehandler': { ResponseHandler: responseHandlerStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request: RequestHandler = new Handlers.RequestHandler(null);
       request.request('PUT', path, null, body, 3132, callback);
@@ -376,11 +389,14 @@ describe('RequestHandler', function () {
       requestFake.on.withArgs('error').callsArgWith(1, requestError);
 
       let requestStub = sinon.stub().returns(requestFake);
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns('asdhjahsdj') }
 
       callback = sinon.expectation.create().once();
 
       let Handlers = proxyquire('../lib/requesthandler', {
-        'https': { request: requestStub }
+        'https': { request: requestStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request: RequestHandler = new Handlers.RequestHandler(null);
       request.request('PLOP', '/path', null, null, 3132, callback);
@@ -417,11 +433,14 @@ describe('RequestHandler', function () {
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
 
       let requestStub = sinon.stub().returns(requestFake);
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns('asdhjahsdj') }
 
       callback = sinon.expectation.create().never();
 
       let Handlers = proxyquire('../lib/requesthandler', {
-        'https': { request: requestStub }
+        'https': { request: requestStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request: RequestHandler = new Handlers.RequestHandler({ timeout: timeout });
       request.request('asdkj', '/290348nj', null, null, 215, callback);
@@ -461,11 +480,14 @@ describe('RequestHandler', function () {
 
       let requestFake = { on: sinon.stub(), end: sinon.stub(), abort: sinon.expectation.create().once() };
       requestFake.on.withArgs('socket').callsArgWith(1, socketFake);
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns('asdhjahsdj') }
 
       let requestStub = sinon.stub().returns(requestFake);
 
       let Handlers = proxyquire('../lib/requesthandler', {
-        'https': { request: requestStub }
+        'https': { request: requestStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request: RequestHandler = new Handlers.RequestHandler({ timeout: timeout });
       request.request('asdkj', '/290348nj', null, null, 215, sinon.spy());
@@ -487,11 +509,14 @@ describe('RequestHandler', function () {
 
     before(function () {
       let requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.stub() };
+      
+      let userAgentBuilderFake = { Build: sinon.stub().returns('asdhjahsdj') }
 
       requestStub = sinon.expectation.create().once().returns(requestFake);
 
       let Handlers = proxyquire('../lib/requesthandler', {
-        'http': { request: requestStub }
+        'http': { request: requestStub },
+        './useragentbuilder': { UserAgentBuilder: userAgentBuilderFake }
       });
       let request: RequestHandler = new Handlers.RequestHandler({ https: false });
       request.request('PUT', '/290348nj', {}, null, 215, sinon.spy());
