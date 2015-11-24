@@ -30,4 +30,3 @@ node_modules
 coverage/
 config.json
 build/
-release/

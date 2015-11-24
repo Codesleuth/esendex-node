@@ -9,8 +9,6 @@ script:
   - npm test
 sudo: false
 
-before_deploy: "rm -rf src/typings"
-
 deploy:
   provider: npm
   email: development@esendex.com
