@@ -18,3 +18,5 @@ deploy:
     repo: esendex/esendex-node-sdk
     node: node
   skip_cleanup: true
+notifications:
+  email: false
