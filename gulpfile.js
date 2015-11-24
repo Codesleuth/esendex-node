@@ -16,7 +16,6 @@ var paths = {
 
 var tsconfig = {
   module: 'commonjs',
-  removeComments: true,
   declaration: true
 }
 
@@ -40,16 +39,4 @@ gulp.task('build', ['clean'], function () {
 gulp.task('test', function () {
   return gulp.src(paths.test + '/**/*.js', { read: false })
     .pipe(mocha({ reporter: 'spec', require: ['source-map-support/register'] }))
-})
-
-gulp.task('clean-release', function (cb) {
-  rimraf('release', cb)
-})
-
-gulp.task('release', ['clean-release'], function () {
-  return merge([
-    gulp.src(['build/lib/**/*']).pipe(gulp.dest('release/lib')),
-    gulp.src(['build/definitions/lib/**/*']).pipe(gulp.dest('release/definitions')),
-    gulp.src(['package.json', 'LICENSE', 'README.md']).pipe(gulp.dest('release'))
-  ])
 })

@@ -1,7 +1,7 @@
 esendex-node
 ============
 
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Codeship Status for Codesleuth/esendex-node][codeship-image]][codeship-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
 [![NPM][npmico-image]][npmico-url]
 
 A work-in-progress simplistic client library for the [Esendex](http://esendex.com) [REST API](http://developers.esendex.com/APIs/REST-API).
@@ -38,14 +38,8 @@ Pull requests are welcome, but there are some rules:
 [npm-image]: http://img.shields.io/npm/v/esendex.svg
 [npm-url]: https://npmjs.org/package/esendex
 
-[travis-image]: https://travis-ci.org/Codesleuth/esendex-node.svg?branch=master
-[travis-url]: https://travis-ci.org/Codesleuth/esendex-node
-
-[coveralls-image]: https://coveralls.io/repos/Codesleuth/esendex-node/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/Codesleuth/esendex-node?branch=master
-
-[codeship-image]: https://www.codeship.io/projects/51dfa190-ff1b-0131-5487-5eefab01992e/status
-[codeship-url]: https://www.codeship.io/projects/29670
+[travis-image]: https://travis-ci.org/esendex/esendex-node-sdk.svg?branch=master
+[travis-url]: https://travis-ci.org/esendex/esendex-node-sdk
 
 [npmico-image]: https://nodei.co/npm/esendex.png
 [npmico-url]: https://nodei.co/npm/esendex/

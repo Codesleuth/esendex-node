@@ -1,14 +1,20 @@
 language: node_js
 node_js:
   - '4.1'
-  - '0.10.32'
+  - 0.10.32
   - node
   - iojs
-before_script:
-  - npm run tsd
 script:
   - npm run build
   - npm test
-after_script:
-  - npm run coveralls
 sudo: false
+
+deploy:
+  provider: npm
+  email: development@esendex.com
+  api_key:
+    secure: KFeAQQzn2Ja5GrzInyB0YFgFaLe0Th/gkn6AnzWLjcHPMoUWIOm6WhhcFBufrIjYLM8Ulgxl0Q+tzvvjxj2ul+x49w8mPX0oZa4NzeHewXOIU2siaM2H9hiMWgMx7YAD2M6riO7Hm88U1wCCxliSdydgDxG2EKMV7KxVi0j5kAkiCTJFb9Gn4s95yQL+ix0sTBWYX00hJMqPR60YscCVCcPHRIGBCD8HfWE+No5i6bxc8p55aAPf6HKKMHGqq67fn00Ppm9jPP134ty4P3RyfAuO1q+3FZDay1DEGFx3HoUmEM0WvlUbmgPsaYUwi85Hz3JNVtlT/KUvCrjOc2mz2EI8kZAVUaIDJZM2byK6jPH57yI7NaOhYY7qJL/BvDmW6VsCO6jEHm+z4qafGQEmfLqmPN76NCSD8dR34gEGENQnnvFuhIPSwy9HabKqDL4WQmYsXY9yCgRU1y0v+NukPAnQ9TEbxnxMKXTPZQD1/N8eJE5UuCUPL00LzUPrsC4QJ3dWjznricsJczX6wDdwGTdo9KcfQGT4s/w3drqk3et+KZ9aZAgehWRM7MNOMHEiDbYTqde1jvaKvUCNHNu5uTrQObqZL8kNL915xs9K9++mU+oQG7WSB0nvKSvBp88ayM5CyWBeIYGWkCkSek898Ygh908wMqreW/LXdZniyd8=
+  on:
+    tags: true
+    repo: esendex/esendex-node-sdk
+  skip_cleanup: true
