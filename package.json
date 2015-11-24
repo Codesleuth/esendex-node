@@ -2,12 +2,11 @@
   "name": "esendex",
   "version": "0.1.3",
   "description": "Esendex Node.js client library.",
-  "main": "lib/index.js",
+  "main": "release/lib/index.js",
   "scripts": {
     "build": "gulp build",
     "test": "gulp test",
     "tsd": "tsd install",
-    "release": "gulp release",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --require source-map-support/register -R spec dist/test/*.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coveralls"
   },
   "repository": {

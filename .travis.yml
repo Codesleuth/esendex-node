@@ -12,6 +12,9 @@ script:
 after_script:
   - npm run coveralls
 sudo: false
+
+before_deploy: "rm -rf src/typings"
+
 deploy:
   provider: npm
   email: development@esendex.com
@@ -20,3 +23,4 @@ deploy:
   on:
     tags: true
     repo: esendex/esendex-node-sdk
+  skip_cleanup: true
