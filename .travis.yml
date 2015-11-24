@@ -7,8 +7,6 @@ node_js:
 script:
   - npm run build
   - npm test
-after_script:
-  - npm run coveralls
 sudo: false
 
 before_deploy: "rm -rf src/typings"
