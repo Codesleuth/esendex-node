@@ -12,10 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/codesleuth/esendex-node"
+    "url": "https://github.com/esendex/esendex-node-sdk"
   },
   "bugs": {
-    "url": "https://github.com/codesleuth/esendex-node/issues"
+    "url": "https://github.com/esendex/esendex-node-sdk/issues"
   },
   "keywords": [
     "sms",
@@ -30,7 +30,7 @@
     "node": ">=0.10"
   },
   "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
-  "license": "MIT",
+  "license": "(MIT OR BSD-3-Clause)",
   "dependencies": {
     "xml2js": "^0.4.15"
   },
