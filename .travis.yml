@@ -4,8 +4,6 @@ node_js:
   - 0.10.32
   - node
   - iojs
-before_script:
-  - npm run tsd
 script:
   - npm run build
   - npm test
