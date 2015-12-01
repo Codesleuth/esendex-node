@@ -33,6 +33,7 @@ export class EsendexFake {
     this.app.get('/v1.0/accounts', this.AccountsEndpoint.bind(this));
     this.app.get('/v1.0/accounts/01234567-89AB-CDEF-0123-456789ABCDEF', this.AccountEndpoint.bind(this));
     this.app.get('/v1.0/messageheaders', this.MessageHeadersEndpoint.bind(this));
+    this.app.get('/v1.0/messageheaders/CDEB3533-1F76-46D7-A2A9-0DAF8290F7FC', this.MessageHeaderEndpoint.bind(this));
     this.app.post('/v1.0/messagedispatcher', textBodyParser, this.MessageDispatcherEndpoint.bind(this));
   }
   
@@ -52,6 +53,12 @@ export class EsendexFake {
     res.status(200);
     res.set('Content-Type', 'application/xml');
     createReadStream(joinPath(__dirname, '..', '..', 'responses', 'messagedispatcher-post.xml')).pipe(res);
+  }
+  
+  private MessageHeaderEndpoint(req: express.Request, res: express.Response) {
+    res.status(200);
+    res.set('Content-Type', 'application/xml');
+    createReadStream(joinPath(__dirname, '..', '..', 'responses', 'messageheaders-get-single.xml')).pipe(res);
   }
   
   private MessageHeadersEndpoint(req: express.Request, res: express.Response) {

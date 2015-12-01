@@ -53,6 +53,37 @@ describe('Messages Integration', function () {
     });
   });
 
+  describe('get single message', function () {
+
+    var message;
+
+    before(function (done) {
+      var options = { id: 'CDEB3533-1F76-46D7-A2A9-0DAF8290F7FC' };
+
+      esendex.messages.get(options, function (err, messageheader) {
+        if (err) return done(err);
+        message = messageheader;
+        done();
+      });
+    });
+
+    it('should return the expected messageheader', function () {
+      assert.strictEqual(message.id, 'CDEB3533-1F76-46D7-A2A9-0DAF8290F7FC');
+      assert.strictEqual(message.uri, 'http://api.esendex.com/v1.0/messageheaders/CDEB3533-1F76-46D7-A2A9-0DAF8290F7FC/');
+      assert.strictEqual(message.status, 'Delivered');
+      assert.strictEqual(message.laststatusat, '2010-01-01T12:00:05.000');
+      assert.strictEqual(message.submittedat, '2010-01-01T12:00:02.000');
+      assert.strictEqual(message.type, 'SMS');
+      assert.strictEqual(message.to.phonenumber, '447700900123');
+      assert.strictEqual(message.from.phonenumber, '447700900654');
+      assert.strictEqual(message.summary, 'Testing REST API');
+      assert.strictEqual(message.body.uri, 'http://api.esendex.com/v1.0/messageheaders/CDEB3533-1F76-46D7-A2A9-0DAF8290F7FC/body');
+      assert.strictEqual(message.direction, 'Outbound');      
+      assert.strictEqual(message.parts, '1');      
+      assert.strictEqual(message.username, 'user@example.com');      
+    });
+  });
+
   describe('send a message', function () {
 
     var response;
