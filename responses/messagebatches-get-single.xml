@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messagebatch xmlns="http://api.esendex.com/ns/" id="E82EB6DD-F457-4FCE-8003-AFDC66042FC9" uri="https://api.esendex.com/v1.1/messagebatches/E82EB6DD-F457-4FCE-8003-AFDC66042FC9">
+  <createdat>2012-01-01T12:00:00.000Z</createdat>
+  <batchsize>1</batchsize>
+  <persistedbatchsize>1</persistedbatchsize>
+  <status>
+    <acknowledged>0</acknowledged>
+    <authorisationfailed>0</authorisationfailed>
+    <connecting>0</connecting>
+    <delivered>0</delivered>
+    <failed>0</failed>
+    <partiallydelivered>0</partiallydelivered>
+    <rejected>0</rejected>
+    <scheduled>0</scheduled>
+    <sent>0</sent>
+    <submitted>1</submitted>
+    <validityperiodexpired>0</validityperiodexpired>
+    <cancelled>0</cancelled>
+  </status>
+  <accountreference>EX0000000</accountreference>
+  <createdby>user@example.com</createdby>
+  <name/>
+  <link rel="cancel" href="https://api.esendex.com/v1.1/messagebatches/E82EB6DD-F457-4FCE-8003-AFDC66042FC9/schedule" />
+</messagebatch>
