@@ -1,7 +1,7 @@
 import * as assert from 'assert'
 import {isArray} from 'util'
 import {EsendexFake} from './esendexfake'
-import Esendex = require('../lib')
+import Esendex = require('../lib/index')
 
 describe('Messages Integration', function () {
 

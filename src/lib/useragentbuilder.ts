@@ -10,7 +10,7 @@ function version() {
 export class UserAgentBuilder {  
   static Build() {
     let pkg = { version: 'DEV' }
-    let pkgconfig = resolve(__dirname, '..', 'package.json');
+    let pkgconfig = resolve(__dirname, '..', '..', 'package.json');
     if (fs.existsSync(pkgconfig)) {
       pkg = JSON.parse(fs.readFileSync(pkgconfig, 'utf8'))
     }

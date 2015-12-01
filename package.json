@@ -1,20 +1,19 @@
 {
   "name": "esendex",
-  "version": "0.1.3",
+  "version": "0.1.6",
   "description": "Esendex Node.js client library.",
-  "main": "lib/index.js",
+  "main": "build/lib/index.js",
   "scripts": {
     "build": "gulp build",
     "test": "gulp test",
-    "tsd": "tsd install",
-    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --require source-map-support/register -R spec dist/test/*.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coveralls"
+    "tsd": "tsd install"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/codesleuth/esendex-node"
+    "url": "https://github.com/esendex/esendex-node-sdk"
   },
   "bugs": {
-    "url": "https://github.com/codesleuth/esendex-node/issues"
+    "url": "https://github.com/esendex/esendex-node-sdk/issues"
   },
   "keywords": [
     "sms",
@@ -29,22 +28,19 @@
     "node": ">=0.10"
   },
   "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
-  "license": "MIT",
+  "license": "(MIT OR BSD-3-Clause)",
   "dependencies": {
     "xml2js": "^0.4.15"
   },
   "devDependencies": {
     "body-parser": "^1.14.1",
-    "coveralls": "^2.11.4",
     "express": "^4.13.3",
     "gulp": "^3.9.0",
     "gulp-mocha": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-typescript": "^2.9.2",
-    "istanbul": "^0.4.0",
     "merge2": "^0.3.6",
     "mocha": "^2.3.4",
-    "mocha-lcov-reporter": "^1.0.0",
     "proxyquire": "^1.7.3",
     "rimraf": "^2.4.3",
     "sinon": "^1.17.2",
