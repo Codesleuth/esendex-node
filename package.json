@@ -42,10 +42,10 @@
     "merge2": "^0.3.6",
     "mocha": "^2.3.4",
     "proxyquire": "^1.7.3",
-    "rimraf": "^2.4.3",
+    "rimraf": "^2.4.4",
     "sinon": "^1.17.2",
-    "source-map-support": "^0.3.3",
+    "source-map-support": "^0.4.0",
     "tsd": "^0.6.5",
-    "typescript": "^1.6.2"
+    "typescript": "^1.7.3"
   }
 }
