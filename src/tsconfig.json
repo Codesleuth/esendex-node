@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "sourceMaps": true
+    "sourceMap": true
   }
 }

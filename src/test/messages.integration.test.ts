@@ -94,7 +94,48 @@ describe('Messages Integration', function () {
         accountreference: 'EX0123456',
         message: [{
           to: '447000000000',
-          body: "Every message matters!"
+          body: 'Every message matters!'
+        }]
+      };
+
+      esendex.messages.send(messages, function (err, res) {
+        if (err) return done(err);
+        response = res;
+        loggedRequest = esendexFake.dispatcherRequests.length === 0 ? null :  esendexFake.dispatcherRequests[0];
+        done();
+      });
+    });
+
+    it('should return the batch ID of the sent message', function () {
+      assert.strictEqual(response.batchid, 'F8BF9867-FF81-49E4-ACC5-774DE793B776');
+    });
+
+    it('should return the messageheader ID and uri of the sent message', function () {
+      assert.strictEqual(response.messageheader[0].id, '1183C73D-2E62-4F60-B610-30F160BDFBD5');
+      assert.strictEqual(response.messageheader[0].uri, 'https://api.esendex.com/v1.0/messageheaders/1183C73D-2E62-4F60-B610-30F160BDFBD5');
+    });
+
+    it('should return an array of sent message headers', function () {
+      assert.ok(isArray(response.messageheader));
+    });
+
+    it('should return one sent message header', function () {
+      assert.strictEqual(response.messageheader.length, 1);
+    });
+  });
+
+  describe('send a unicode message', function () {
+
+    var response;
+    var loggedRequest;
+
+    before(function (done) {
+      var messages = {
+        accountreference: 'EX0123456',
+        characterset: 'Unicode',
+        message: [{
+          to: '447000000000',
+          body: 'Every 🐳 matters!'
         }]
       };
 
