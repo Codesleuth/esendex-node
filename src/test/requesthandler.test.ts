@@ -202,6 +202,7 @@ describe('RequestHandler', function () {
 
     var path;
     var body;
+    var bodyLength;
     var responseBody;
     var requestFake;
     var requestStub;
@@ -209,10 +210,11 @@ describe('RequestHandler', function () {
 
     before(function () {
       path = '1/2/3/4';
-      body = 'some xml body';
+      body = 'some unicode xml 🐳 body';
+      bodyLength = 26;
       responseBody = 'This is the response body content';
 
-      requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.expectation.create().once() };
+      requestFake = { on: sinon.stub(), end: sinon.stub(), write: sinon.spy() };
 
       requestStub = sinon.stub().callsArg(1).returns(requestFake);
       
@@ -244,12 +246,13 @@ describe('RequestHandler', function () {
       sinon.assert.calledWith(requestStub, sinon.match({
         headers: {
           'Content-Type': 'application/xml',
-          'Content-Length': body.length
+          'Content-Length': bodyLength
       }}));
     });
 
-    it('should write the request body to the request', function () {
-      sinon.assert.calledWith(requestFake.write, body);
+    it('should write the request body buffer to the request', function () {
+      sinon.assert.calledOnce(requestFake.write);
+      assert.equal(requestFake.write.args[0].toString('utf8'), body);
     });
 
     it('should have called the callback', function () {
@@ -366,8 +369,9 @@ describe('RequestHandler', function () {
       }}));
     });
 
-    it('should write the request body to the request', function () {
-      sinon.assert.calledWith(requestFake.write, body);
+    it('should write the request body buffer to the request', function () {
+      sinon.assert.calledOnce(requestFake.write);
+      assert.equal(requestFake.write.args[0].toString('utf8'), body);
     });
 
     it('should have called the callback', function () {

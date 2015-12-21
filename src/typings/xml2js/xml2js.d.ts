@@ -45,6 +45,7 @@ declare module 'xml2js' {
             renderOpts?: RenderOptions;
             rootName?: string;
             xmldec?: XMLDeclarationOptions;
+            allowSurrogateChars?: boolean
         }
 
         interface Options {

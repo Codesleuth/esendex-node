@@ -38,7 +38,8 @@ describe('XmlBuilder', function () {
         standalone: null,
         version: '1.0',
         encoding: 'UTF-8'
-      }
+      },
+      allowSurrogateChars: true
     }));
   });
   

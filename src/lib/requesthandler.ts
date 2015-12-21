@@ -56,10 +56,13 @@ export class RequestHandler {
       headers: headers,
       auth: this.options.username + ':' + this.options.password
     };
+    
+    var dataBuf: Buffer;
   
     if (isPost) {
+      dataBuf = data ? new Buffer(data, 'utf8') : null;
       headers['Content-Type'] = 'application/xml';
-      headers['Content-Length'] = data ? data.length : 0;
+      headers['Content-Length'] = data ? dataBuf.length : 0;
     }
   
     var proto = this.options.https ? https : http;
@@ -81,7 +84,7 @@ export class RequestHandler {
       callback(err);
     });
   
-    if (isPost && data) req.write(data);
+    if (isPost && data) req.write(dataBuf);
     req.end();
   }
 }
