@@ -1,6 +1,6 @@
 {
   "name": "esendex",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Esendex Node.js client library.",
   "main": "build/lib/index.js",
   "scripts": {
