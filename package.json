@@ -30,7 +30,7 @@
   "author": "David Wood <david.p.wood@gmail.com> (http://www.codesleuth.co.uk/)",
   "license": "(MIT OR BSD-3-Clause)",
   "dependencies": {
-    "xml2js": "codesleuth/node-xml2js#62554a7"
+    "xml2js": "^0.4.16"
   },
   "devDependencies": {
     "body-parser": "^1.14.1",
