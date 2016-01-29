@@ -15,4 +15,9 @@
   <direction>Outbound</direction> 
   <parts>1</parts> 
   <username>user@example.com</username> 
+  <failurereason>
+    <code>84</code>
+    <description>Unrecognised address</description>
+    <retryable>false</retryable>
+  </failurereason>
 </messageheader>

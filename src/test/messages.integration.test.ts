@@ -44,12 +44,33 @@ describe('Messages Integration', function () {
       assert.ok(messages.count);
     });
 
+    it('should return one message', function () {
+      assert.strictEqual(messages.messageheader.length, 1);
+    });
+
     it('should return the total count of sent messages', function () {
       assert.ok(messages.totalcount);
     });
 
-    it('should return an array of messageheader', function () {
-      assert.ok(isArray(messages.messageheader));
+    it('should return the expected messageheaders', function () {
+      const message = messages.messageheader[0];
+      assert.strictEqual(message.id, '1B9A0D33-4B76-4A9D-919C-1165A9CF1565');
+      assert.strictEqual(message.uri, 'http://api.esendex.com/v1.0/messageheaders/1B9A0D33-4B76-4A9D-919C-1165A9CF1565/');
+      assert.strictEqual(message.reference, 'EX0000000');
+      assert.strictEqual(message.status, 'Delivered');
+      assert.strictEqual(message.laststatusat, '2012-01-01T12:00:05.000');
+      assert.strictEqual(message.submittedat, '2012-01-01T12:00:02.000');
+      assert.strictEqual(message.type, 'SMS');
+      assert.strictEqual(message.to.phonenumber, '447700900123');
+      assert.strictEqual(message.from.phonenumber, '447700900654');
+      assert.strictEqual(message.summary, 'Testing REST API');
+      assert.strictEqual(message.body.uri, 'http://api.esendex.com/v1.0/messageheaders/1B9A0D33-4B76-4A9D-919C-1165A9CF1565/body');
+      assert.strictEqual(message.direction, 'Outbound');
+      assert.strictEqual(message.parts, '1');
+      assert.strictEqual(message.username, 'user@example.com');
+      assert.strictEqual(message.failurereason.code, '112');
+      assert.strictEqual(message.failurereason.description, 'Temporary issue');
+      assert.strictEqual(message.failurereason.retryable, 'true');
     });
   });
 
@@ -80,7 +101,10 @@ describe('Messages Integration', function () {
       assert.strictEqual(message.body.uri, 'http://api.esendex.com/v1.0/messageheaders/CDEB3533-1F76-46D7-A2A9-0DAF8290F7FC/body');
       assert.strictEqual(message.direction, 'Outbound');      
       assert.strictEqual(message.parts, '1');      
-      assert.strictEqual(message.username, 'user@example.com');      
+      assert.strictEqual(message.username, 'user@example.com');
+      assert.strictEqual(message.failurereason.code, '84');
+      assert.strictEqual(message.failurereason.description, 'Unrecognised address');
+      assert.strictEqual(message.failurereason.retryable, 'false');     
     });
   });
 
